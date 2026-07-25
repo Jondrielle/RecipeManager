@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,Optional
 from enums.difficulty import Difficulty
+
 
 class Recipe(BaseModel):
 	name: str
-	description:str
+	description:Optional[str] = None
 	ingredients:str[]
 	instructions:str
 	prep time:str
