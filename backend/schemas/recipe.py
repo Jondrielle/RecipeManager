@@ -13,7 +13,7 @@ class RecipeBase(BaseModel):
 	difficulty: Difficulty
 
 class Recipe(RecipeBase):
-	id = int
+	id: int
 
 class CreateRecipe(RecipeBase):
 	pass
