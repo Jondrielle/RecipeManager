@@ -40,7 +40,7 @@ async function createRecipe(){
       body: JSON.stringify({
         name: name.value,
         description: description.value,
-        ingredients: ingredients.value,
+        ingredients: ingredients.value.split(',').map(item => item.trim()),
         instructions: instructions.value,
         prep_time: prep_time.value,
         cook_time: cook_time.value,
@@ -54,8 +54,15 @@ async function createRecipe(){
     }
 
     const result = await response.json()
-    recipes.values.push(result)
-
+    recipes.value.push(result)
+    name.value = ""
+    description.value = ""
+    ingredients.value = ""
+    instructions.value = ""
+    prep_time.value = ""
+    cook_time.value = ""
+    servings.value = ""
+    difficulty.value = "" 
   }catch(error){
     console.error(error.message)
   }
@@ -80,10 +87,17 @@ onMounted(()=>{})
   <div v-for="recipe in recipes"
   :key="recipe.id">
     <div>
-      {{recipe.name}}
+      Name: {{recipe.name}}
+      Description: {{recipe.description}}
+      Ingredients: {{recipe.ingredients}}
+      Instructions: {{recipe.instructions}}
+      Prep: {{recipe.prep_time}}
+      Cook: {{recipe.cook_time}}
+      Servings: {{recipe.servings}}
+      Difficulty: {{recipe.difficulty}}
     </div>
-
   </div>
+
   <input v-model="name" placeholder="Name"></input>
 
   <input v-model="description" placeholder="Description"></input>
@@ -93,18 +107,19 @@ onMounted(()=>{})
   <input v-model="instructions"
   placeholder="Instructions"></input>
   
-  <input v-model="prep_time"
-  placeholder="Prep time"></input>
+  <input v-model.number="prep_time"
+  placeholder="Prep"></input>
+
+  <input v-model.number="cook_time"
+  placeholder="Cook"></input>
   
-  <input v-model="cook_time"
-  placeholder="Cook time"></input>
-  
-  <input v-model="servings"
+  <input v-model.number="servings"
   placeholder="Servings"></input>
   
   <input v-model="difficulty"
   placeholder="Difficulty"></input>
 
+  <button @click="createRecipe">Add Recipe</button>
 </template>
 
 <style scoped></style>
