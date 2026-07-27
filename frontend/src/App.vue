@@ -14,7 +14,7 @@ const difficulty = ref("")
 
 async function getRecipes(){
   try{
-    const response = await fetch("http//localhost:8000/")
+    const response = await fetch("http://localhost:8000/")
 
     if (!response.ok){
       throw new Error(`Response status:${response.status}`)
@@ -63,6 +63,7 @@ async function createRecipe(){
     cook_time.value = ""
     servings.value = ""
     difficulty.value = "" 
+    console.log(recipes)
   }catch(error){
     console.error(error.message)
   }
@@ -77,7 +78,9 @@ async function updateRecipe(){
   
 }
 
-onMounted(()=>{})
+onMounted(()=>{
+  getRecipes()
+})
 </script>
 
 <template>
@@ -116,8 +119,12 @@ onMounted(()=>{})
   <input v-model.number="servings"
   placeholder="Servings"></input>
   
-  <input v-model="difficulty"
-  placeholder="Difficulty"></input>
+  <select v-model="difficulty">
+    <option disabled value="">Select Difficulty</option>
+    <option value="Easy">Easy</option>
+    <option value="Medium">Medium</option>
+    <option value="Hard">Hard</option>
+  </select>
 
   <button @click="createRecipe">Add Recipe</button>
 </template>
