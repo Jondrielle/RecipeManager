@@ -55,6 +55,7 @@ async function createRecipe(){
 
     const result = await response.json()
     recipes.value.push(result)
+
     name.value = ""
     description.value = ""
     ingredients.value = ""
@@ -63,15 +64,28 @@ async function createRecipe(){
     cook_time.value = ""
     servings.value = ""
     difficulty.value = "" 
+
     console.log(recipes)
   }catch(error){
     console.error(error.message)
   }
-  
 }
 
-async function deleteRecipe(){
-  
+async function deleteRecipe(id){
+  try{
+    const response = await fetch(`http://localhost:8000/recipe/${id}`,{
+      method:"DELETE"
+    })
+
+    if(!response.ok){
+      throw new Error(`Status:${response.status}`)
+    }
+
+    recipes.value = recipes.value.filter(recipe => recipe.id !== id)
+
+  }catch(error){
+    console.error(error.message)
+  }
 }
 
 async function updateRecipe(){
@@ -98,6 +112,7 @@ onMounted(()=>{
       Cook: {{recipe.cook_time}}
       Servings: {{recipe.servings}}
       Difficulty: {{recipe.difficulty}}
+      <button @click="deleteRecipe(recipe.id)">Delete Recipe</button>
     </div>
   </div>
 
