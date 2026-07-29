@@ -110,6 +110,17 @@ async function updateRecipe(id){
     if(!response.ok){
       throw new Error(`Status:${response.status}`)
     }
+
+    getRecipes()
+
+    name.value = ""
+    description.value = ""
+    instructions.value = ""
+    ingredients.value = ""
+    prep_time.value = ""
+    cook_time.value = ""
+    servings.value = ""
+    dfficulty.value = ""
   }catch(error){
     console.error(error.message)
   } 
@@ -125,8 +136,8 @@ function loadRecipe(recipe){
   servings.value = recipe.servings
   difficulty.value = recipe.difficulty
 
-  updateRecipe(recipe.id)
 }
+
 
 onMounted(()=>{
   getRecipes()
@@ -151,6 +162,7 @@ onMounted(()=>{
       <button @click="deleteRecipe(recipe.id)">Delete Recipe</button>
 
       <button @click="loadRecipe(recipe)">EDIT</button>
+      <button @click="updateRecipe(recipe.id)">Save Updates</button>
     </div>
   </div>
 
