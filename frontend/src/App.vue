@@ -88,8 +88,44 @@ async function deleteRecipe(id){
   }
 }
 
-async function updateRecipe(){
-  
+async function updateRecipe(id){
+  try{
+    const response = await fetch(`http://localhost:8000/recipes/${id}`,{
+      method:"PATCH",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({
+        name: name.value,
+        description: description.value,
+        ingredients: ingredients.value,
+        instructions: instructions.value,
+        prep_time: prep_time.value,
+        cook_time: cook_time.value,
+        servings: servings.value,
+        difficulty: difficulty.value
+      })
+    })
+
+    if(!response.ok){
+      throw new Error(`Status:${response.status}`)
+    }
+  }catch(error){
+    console.error(error.message)
+  } 
+}
+
+function loadRecipe(recipe){
+  name.value = recipe.name
+  description.value = recipe.description
+  ingredients.value = recipe.ingredients
+  instructions.value = recipe.instructions
+  prep_time.value = recipe.prep_time
+  cook_time.value = recipe.cook_time
+  servings.value = recipe.servings
+  difficulty.value = recipe.difficulty
+
+  updateRecipe(recipe.id)
 }
 
 onMounted(()=>{
@@ -113,6 +149,8 @@ onMounted(()=>{
       Servings: {{recipe.servings}}
       Difficulty: {{recipe.difficulty}}
       <button @click="deleteRecipe(recipe.id)">Delete Recipe</button>
+
+      <button @click="loadRecipe(recipe)">EDIT</button>
     </div>
   </div>
 
