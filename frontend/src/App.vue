@@ -3,6 +3,8 @@ import {ref,onMounted} from 'vue'
 
 import recipeItem from "./components/recipeItem.vue"
 
+import recipeForm from "./components/recipeForm.vue"
+
 const recipes = ref([])
 
 const name = ref("")
@@ -13,6 +15,8 @@ const prep_time = ref(0)
 const cook_time = ref(0)
 const servings = ref(1)
 const difficulty = ref("")
+
+const isEditing = ref(false)
 
 async function getRecipes(){
   try{
@@ -140,6 +144,10 @@ function loadRecipe(recipe){
 
 }
 
+function StartEdit(recipe){
+  recipe.value = {...recipe}
+  isEditing.value = true
+}
 
 onMounted(()=>{
   getRecipes()
@@ -167,27 +175,10 @@ onMounted(()=>{
       <button @click="updateRecipe(recipe.id)">Save Updates</button>
       <recipeItem
         :recipe="recipe"
+        @edit="StartEdit()"
       />
     </div>
   </div>
-
-  <input v-model="name" placeholder="Name"></input>
-
-  <input v-model="description" placeholder="Description"></input>
-  
-  <input v-model="ingredients" placeholder="Ingredients"></input>
-  
-  <input v-model="instructions"
-  placeholder="Instructions"></input>
-  
-  <input v-model.number="prep_time"
-  placeholder="Prep"></input>
-
-  <input v-model.number="cook_time"
-  placeholder="Cook"></input>
-  
-  <input v-model.number="servings"
-  placeholder="Servings"></input>
   
   <select v-model="difficulty">
     <option disabled value="">Select Difficulty</option>
@@ -198,6 +189,9 @@ onMounted(()=>{
 
   <button @click="createRecipe">Add Recipe</button>
 
+  <recipeForm
+    :editMode="isEditing"
+  />
 
 </template>
 

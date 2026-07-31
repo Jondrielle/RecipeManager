@@ -3,6 +3,16 @@
 const props = defineProps({
 	recipe: Object
 })
+
+const emit = defineEmits(['edit','add','delete'])
+
+function editRecipe(){
+	emit('edit',props.recipe)
+}
+
+function addRecipe(){
+	emit('add',props.recipe)
+}
 </script>
 
 <template>
@@ -16,8 +26,8 @@ const props = defineProps({
 		<span class="stats">{{recipe.difficulty}}</span>
 
 		<div class="buttons">
-			<button>EDIT</button>
-			<button>SAVE UPDATES</button>
+			<button @click="editRecipe">EDIT</button>
+			<button @click="addRecipe">Add</button>
 		</div>
 	</div>
 </template>
