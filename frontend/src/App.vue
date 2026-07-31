@@ -1,6 +1,8 @@
 <script setup>
 import {ref,onMounted} from 'vue'
 
+import recipeItem from "./components/recipeItem.vue"
+
 const recipes = ref([])
 
 const name = ref("")
@@ -163,6 +165,9 @@ onMounted(()=>{
 
       <button @click="loadRecipe(recipe)">EDIT</button>
       <button @click="updateRecipe(recipe.id)">Save Updates</button>
+      <recipeItem
+        :recipe="recipe"
+      />
     </div>
   </div>
 
@@ -192,6 +197,8 @@ onMounted(()=>{
   </select>
 
   <button @click="createRecipe">Add Recipe</button>
+
+
 </template>
 
 <style scoped></style>

@@ -1,15 +1,43 @@
 <script setup>
+
+const props = defineProps({
+	recipe: Object
+})
 </script>
 
 <template>
-<div>
-	Name:
-	Description:
-	Ingredients:
-	Instructions:
-	Prep Time:
-	Cook Time:
-	Servings:
-	Difficulty:
-</div>
+	<div class="card">
+		<h2>Name:{{recipe.name}}</h2>
+		<p>{{recipe.description}}</p>
+		<p>{{recipe.ingredients}}</p>
+		<p>{{recipe.instructions}}</p>
+		<span class="stats">{{recipe.prep_time}} </span>
+		<span class="stats">{{recipe.cook_time}}</span> 
+		<span class="stats">{{recipe.difficulty}}</span>
+
+		<div class="buttons">
+			<button>EDIT</button>
+			<button>SAVE UPDATES</button>
+		</div>
+	</div>
 </template>
+
+<style scoped>
+	.card{
+		border: 2px solid orange;
+		border-radius:5px;
+		padding:8px;
+	}
+
+	.stats{
+		display:flex;
+		gap:12px;
+	}
+
+	.buttons{
+		display:flex;
+		justify-content:flex-end;
+		gap:8px;
+	}
+</style>
+
