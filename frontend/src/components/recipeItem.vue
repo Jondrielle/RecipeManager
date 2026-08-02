@@ -4,14 +4,14 @@ const props = defineProps({
 	recipe: Object
 })
 
-const emit = defineEmits(['edit','add','delete'])
+const emit = defineEmits(['edit','delete'])
 
 function editRecipe(){
 	emit('edit',props.recipe)
 }
 
-function addRecipe(){
-	emit('add',props.recipe)
+function deleteRecipe(){
+	emit('delete',props.recipe)
 }
 </script>
 
@@ -27,7 +27,7 @@ function addRecipe(){
 
 		<div class="buttons">
 			<button @click="editRecipe">EDIT</button>
-			<button @click="addRecipe">Add</button>
+			<button @click="deleteRecipe">DELETE</button>
 		</div>
 	</div>
 </template>

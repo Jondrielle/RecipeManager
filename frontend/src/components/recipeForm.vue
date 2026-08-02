@@ -1,14 +1,23 @@
 <script setup>
 
 const props = defineProps({
-	editMode:Boolean
+	editMode:Boolean,
+	recipe:Object
 })
 
-const emit = defineEmits(["submit"])
+const emit = defineEmits(["submit","add","edit"])
+
+function addRecipe(){
+	emit("add",props.recipe)
+}
+
+function editRecipe(){
+	emit("edit")
+}
 </script>
 
 <template>
-	<form>
+	<form @submit.prevent="submit">
 		<input v-model="name" placeholder="Name"></input>
 
 		<input v-model="description" placeholder="Description"></input>
@@ -34,6 +43,6 @@ const emit = defineEmits(["submit"])
 		    <option value="Hard">Hard</option>
 		</select>
 
-		<button>Add Recipe</button>
+		<button type="submit">{{ editMode ? "Update Habit" : "Add Habit" }}</button>
 	</form>
 </template>

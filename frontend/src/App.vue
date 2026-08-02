@@ -18,6 +18,8 @@ const difficulty = ref("")
 
 const isEditing = ref(false)
 
+const recipe = ref(null)
+
 async function getRecipes(){
   try{
     const response = await fetch("http://localhost:8000/")
@@ -157,41 +159,23 @@ onMounted(()=>{
 <template>
   <h1>Recipe Manager</h1>
 
-  <h4>List:</h4>
-  <div v-for="recipe in recipes"
-  :key="recipe.id">
-    <div>
-      Name: {{recipe.name}}
-      Description: {{recipe.description}}
-      Ingredients: {{recipe.ingredients}}
-      Instructions: {{recipe.instructions}}
-      Prep: {{recipe.prep_time}}
-      Cook: {{recipe.cook_time}}
-      Servings: {{recipe.servings}}
-      Difficulty: {{recipe.difficulty}}
-      <button @click="deleteRecipe(recipe.id)">Delete Recipe</button>
-
-      <button @click="loadRecipe(recipe)">EDIT</button>
-      <button @click="updateRecipe(recipe.id)">Save Updates</button>
-      <recipeItem
-        :recipe="recipe"
-        @edit="StartEdit()"
-      />
-    </div>
-  </div>
-  
-  <select v-model="difficulty">
-    <option disabled value="">Select Difficulty</option>
-    <option value="Easy">Easy</option>
-    <option value="Medium">Medium</option>
-    <option value="Hard">Hard</option>
-  </select>
-
-  <button @click="createRecipe">Add Recipe</button>
+  <h4>Item:</h4>
 
   <recipeForm
+    :recipe="recipe"
     :editMode="isEditing"
+    @add="createRecipe"
+    @edit="StartEdit" 
   />
+
+  <div>
+    <recipeItem
+      :recipe="recipe"
+      @edit="StartEdit()"
+      @delete="deleteRecipe()"
+    />
+  </div>
+
 
 </template>
 
