@@ -17,14 +17,21 @@ function deleteRecipe(){
 
 <template>
 	<div class="card">
-		<h2>Name:{{recipe.name}}</h2>
+		<h2 class="title">{{recipe.name}}</h2>
 		<p>{{recipe.description}}</p>
-		<p>{{recipe.ingredients}}</p>
+		<ul>
+		  <h2>Ingredients</h2>
+		  <li v-for="ingredient in recipe.ingredients" :key="ingredient"
+		  class="list">
+		    {{ ingredient }}
+		  </li>
+		</ul>
 		<p>{{recipe.instructions}}</p>
-		<span class="stats">{{recipe.prep_time}} </span>
-		<span class="stats">{{recipe.cook_time}}</span> 
-		<span class="stats">{{recipe.difficulty}}</span>
-
+		<div class="stats">
+			<span> Prep Time: {{recipe.prep_time}} </span>
+			<span> Cook Time: {{recipe.cook_time}}</span> 
+			<span> Difficulty: {{recipe.difficulty}}</span>
+		</div>
 		<div class="buttons">
 			<button @click="editRecipe">EDIT</button>
 			<button @click="deleteRecipe">DELETE</button>
@@ -40,7 +47,9 @@ function deleteRecipe(){
 	}
 
 	.stats{
+		margin-top:auto;
 		display:flex;
+		flex-direction:column;
 		gap:12px;
 	}
 
@@ -48,6 +57,14 @@ function deleteRecipe(){
 		display:flex;
 		justify-content:flex-end;
 		gap:8px;
+	}
+
+	.title{
+		text-transform:uppercase
+	}
+
+	.list{
+		text-transform:uppercase
 	}
 </style>
 

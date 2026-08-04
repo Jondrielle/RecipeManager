@@ -115,19 +115,20 @@ onMounted(()=>{
 </script>
 
 <template>
-  <h1>Recipe Manager</h1>
+  <div class="titleBox">
+    <h1 class="header">Recipe Manager</h1>
+  </div>
+  <div class="form">
+    <recipeForm
+      :key="selectedRecipe?.id || 'new'"
+      :recipe="selectedRecipe"
+      :editMode="isEditing"
+      @add="createRecipe"
+      @edit="updateRecipe" 
+    />
+  </div>
 
-  <h4>Item:</h4>
-
-  <recipeForm
-    :key="selectedRecipe?.id || 'new'"
-    :recipe="selectedRecipe"
-    :editMode="isEditing"
-    @add="createRecipe"
-    @edit="updateRecipe" 
-  />
-
-  <div>
+  <div class="recipes">
     <div v-for="recipe in recipes" :key="recipe.id">
       <recipeItem
         :recipe="recipe"
@@ -140,4 +141,23 @@ onMounted(()=>{
 
 </template>
 
-<style scoped></style>
+<style scoped>
+  .titleBox{
+    width:100%;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    margin-bottom:50px;
+    box-shadow: 0 4px 12px rgba(255, 192, 203, 0.4);
+  }
+
+  .header{
+    text-align:center;
+    margin:0;
+    padding:30px;
+  }
+
+  .form{
+    margin-bottom:50px;
+  }
+
+</style>

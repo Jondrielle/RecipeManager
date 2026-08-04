@@ -59,6 +59,12 @@ function submit(){
 		    <option value="Hard">Hard</option>
 		</select>
 
-		<button type="submit">{{ editMode ? "Update Recipe" : "Add Recipe" }}</button>
+		<button class="button" type="submit">{{ editMode ? "Update Recipe" : "Add Recipe" }}</button>
 	</form>
 </template>
+
+<style scoped>
+	.button{
+		border-radius:5px;
+	}
+</style>
