@@ -6,7 +6,7 @@ const props = defineProps({
 	recipe:Object
 })
 
-const emit = defineEmits(["submit","add","edit"])
+const emit = defineEmits(["submit","add","edit","cancel"])
 
 const form = ref({
 	id: props.recipe?.id || null,
@@ -30,41 +30,61 @@ function submit(){
 		emit("add",form.value)
 	}
 }
+
+function cancel(){
+	emit("cancel")
+}
 </script>
 
 <template>
-	<form @submit.prevent="submit">
-		<input v-model="form.name" placeholder="Name"></input>
+	<div class="container">
+		<form @submit.prevent="submit" class="form">
+			<input v-model="form.name" placeholder="Name"></input>
 
-		<input v-model="form.description" placeholder="Description"></input>
-	  
-		<input v-model="form.ingredients" placeholder="Ingredients"></input>
-	  
-		<input v-model="form.instructions"
-	  	placeholder="Instructions"></input>
-
-	  	<input v-model.number="form.prep_time"
-		  placeholder="Prep"></input>
-
-		<input v-model.number="form.cook_time"
-		  placeholder="Cook"></input>
+			<input v-model="form.description" placeholder="Description"></input>
 		  
-		<input v-model.number="form.servings"
-		  placeholder="Servings"></input>
+			<input v-model="form.ingredients" placeholder="Ingredients"></input>
 		  
-		<select v-model="form.difficulty">
-			<option disabled value="">Select Difficulty</option>
-		    <option value="Easy">Easy</option>
-		    <option value="Medium">Medium</option>
-		    <option value="Hard">Hard</option>
-		</select>
+			<input v-model="form.instructions"
+		  	placeholder="Instructions"></input>
 
-		<button class="button" type="submit">{{ editMode ? "Update Recipe" : "Add Recipe" }}</button>
-	</form>
+		  	<input v-model.number="form.prep_time"
+			  placeholder="Prep"></input>
+
+			<input v-model.number="form.cook_time"
+			  placeholder="Cook"></input>
+			  
+			<input v-model.number="form.servings"
+			  placeholder="Servings"></input>
+			  
+			<select v-model="form.difficulty">
+				<option disabled value="">Select Difficulty</option>
+			    <option value="Easy">Easy</option>
+			    <option value="Medium">Medium</option>
+			    <option value="Hard">Hard</option>
+			</select>
+
+			<button class="button" type="submit">{{ editMode ? "Update Recipe" : "Add Recipe" }}</button>
+			<button @click="cancel">Cancel</button>
+		</form>
+	</div>
 </template>
 
 <style scoped>
-	.button{
-		border-radius:5px;
+	.form{
+		display:flex;
+		flex-direction:column;
+		gap:10px;
 	}
+
+	.container {
+	  width: 350px;
+	  margin: 20px auto;
+	  border: 1px solid orange;
+	  border-radius: 12px;
+	  padding: 16px;
+	  background-color: #ffecd2;
+	  margin-top:45px;
+	}
+
 </style>

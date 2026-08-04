@@ -109,6 +109,11 @@ function startEdit(recipe){
   isEditing.value = true
 }
 
+function cancelForm(){
+  selectedRecipe.value = null
+  isEditing.value = false
+}
+
 onMounted(()=>{
   getRecipes()
 })
@@ -117,15 +122,6 @@ onMounted(()=>{
 <template>
   <div class="titleBox">
     <h1 class="header">Recipe Manager</h1>
-  </div>
-  <div class="form">
-    <recipeForm
-      :key="selectedRecipe?.id || 'new'"
-      :recipe="selectedRecipe"
-      :editMode="isEditing"
-      @add="createRecipe"
-      @edit="updateRecipe" 
-    />
   </div>
 
   <div class="recipes">
@@ -138,6 +134,16 @@ onMounted(()=>{
     </div>
   </div>
 
+  <div class="form">
+    <recipeForm
+      :key="selectedRecipe?.id || 'new'"
+      :recipe="selectedRecipe"
+      :editMode="isEditing"
+      @add="createRecipe"
+      @edit="updateRecipe" 
+      @cancel="cancelForm"
+    />
+  </div>
 
 </template>
 
@@ -158,6 +164,12 @@ onMounted(()=>{
 
   .form{
     margin-bottom:50px;
+  }
+
+  .recipes{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
   }
 
 </style>
