@@ -11,7 +11,7 @@ function editRecipe(){
 }
 
 function deleteRecipe(){
-	emit('delete',props.recipe)
+	emit('delete',props.recipe.id)
 }
 </script>
 

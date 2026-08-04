@@ -7,18 +7,9 @@ import recipeForm from "./components/recipeForm.vue"
 
 const recipes = ref([])
 
-const name = ref("")
-const description = ref("")
-const ingredients = ref([])
-const instructions = ref("")
-const prep_time = ref(0)
-const cook_time = ref(0)
-const servings = ref(1)
-const difficulty = ref("")
-
 const isEditing = ref(false)
 
-const recipe = ref(null)
+const selectedRecipe = ref(null)
 
 async function getRecipes(){
   try{
@@ -38,7 +29,7 @@ async function getRecipes(){
   }
 }
 
-async function createRecipe(){
+async function createRecipe(recipe){
   try{
     const response = await fetch("http://localhost:8000/recipe",{
       method:"POST",
@@ -46,14 +37,14 @@ async function createRecipe(){
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: name.value,
-        description: description.value,
-        ingredients: ingredients.value.split(',').map(item => item.trim()),
-        instructions: instructions.value,
-        prep_time: prep_time.value,
-        cook_time: cook_time.value,
-        servings: servings.value,
-        difficulty: difficulty.value
+        name: recipe.name,
+        description: recipe.description,
+        ingredients: recipe.ingredients.split(",").map(item => item.trim()),
+        instructions: recipe.instructions,
+        prep_time: recipe.prep_time,
+        cook_time: recipe.cook_time,
+        servings: recipe.servings,
+        difficulty: recipe.difficulty
       })
     })
 
@@ -62,16 +53,7 @@ async function createRecipe(){
     }
 
     const result = await response.json()
-    recipes.value.push(result)
-
-    name.value = ""
-    description.value = ""
-    ingredients.value = ""
-    instructions.value = ""
-    prep_time.value = ""
-    cook_time.value = ""
-    servings.value = ""
-    difficulty.value = "" 
+    recipes.value.push(result) 
 
     console.log(recipes)
   }catch(error){
@@ -96,22 +78,16 @@ async function deleteRecipe(id){
   }
 }
 
-async function updateRecipe(id){
+async function updateRecipe(recipe){
   try{
-    const response = await fetch(`http://localhost:8000/recipes/${id}`,{
+    const response = await fetch(`http://localhost:8000/recipes/${recipe.id}`,{
       method:"PATCH",
       headers:{
         "Content-Type": "application/json"
       },
       body:JSON.stringify({
-        name: name.value,
-        description: description.value,
-        ingredients: ingredients.value,
-        instructions: instructions.value,
-        prep_time: prep_time.value,
-        cook_time: cook_time.value,
-        servings: servings.value,
-        difficulty: difficulty.value
+        ...recipe,
+        ingredients: recipe.ingredients.split(",").map(item => item.trim())
       })
     })
 
@@ -119,35 +95,17 @@ async function updateRecipe(id){
       throw new Error(`Status:${response.status}`)
     }
 
-    getRecipes()
+    await getRecipes()
 
-    name.value = ""
-    description.value = ""
-    instructions.value = ""
-    ingredients.value = ""
-    prep_time.value = ""
-    cook_time.value = ""
-    servings.value = ""
-    dfficulty.value = ""
+    selectedRecipe.value = null
+    isEditing.value = false
   }catch(error){
     console.error(error.message)
   } 
 }
 
-function loadRecipe(recipe){
-  name.value = recipe.name
-  description.value = recipe.description
-  ingredients.value = recipe.ingredients
-  instructions.value = recipe.instructions
-  prep_time.value = recipe.prep_time
-  cook_time.value = recipe.cook_time
-  servings.value = recipe.servings
-  difficulty.value = recipe.difficulty
-
-}
-
-function StartEdit(recipe){
-  recipe.value = {...recipe}
+function startEdit(recipe){
+  selectedRecipe.value = {...recipe}
   isEditing.value = true
 }
 
@@ -162,18 +120,21 @@ onMounted(()=>{
   <h4>Item:</h4>
 
   <recipeForm
-    :recipe="recipe"
+    :key="selectedRecipe?.id || 'new'"
+    :recipe="selectedRecipe"
     :editMode="isEditing"
     @add="createRecipe"
-    @edit="StartEdit" 
+    @edit="updateRecipe" 
   />
 
   <div>
-    <recipeItem
-      :recipe="recipe"
-      @edit="StartEdit()"
-      @delete="deleteRecipe()"
-    />
+    <div v-for="recipe in recipes" :key="recipe.id">
+      <recipeItem
+        :recipe="recipe"
+        @edit="startEdit"
+        @delete="deleteRecipe"
+      />
+    </div>
   </div>
 
 
