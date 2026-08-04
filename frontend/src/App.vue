@@ -40,7 +40,7 @@ async function createRecipe(recipe){
         name: recipe.name,
         description: recipe.description,
         ingredients: recipe.ingredients.split(",").map(item => item.trim()),
-        instructions: recipe.instructions,
+        instructions: recipe.instructions.split(",").map(item => item.trim()),
         prep_time: recipe.prep_time,
         cook_time: recipe.cook_time,
         servings: recipe.servings,
@@ -87,7 +87,8 @@ async function updateRecipe(recipe){
       },
       body:JSON.stringify({
         ...recipe,
-        ingredients: recipe.ingredients.split(",").map(item => item.trim())
+        ingredients: recipe.ingredients.split(",").map(item => item.trim()),
+        instructions: recipe.instructions.split(",").map(item => item.trim())
       })
     })
 

@@ -6,7 +6,7 @@ class RecipeBase(BaseModel):
 	name: str
 	description:Optional[str] = None
 	ingredients:list[str]
-	instructions:str
+	instructions:list[str]
 	prep_time:int
 	cook_time:int
 	servings:int
@@ -22,7 +22,7 @@ class UpdateRecipe(BaseModel):
 	name: Optional[str] = None
 	description:Optional[str] = None
 	ingredients:Optional[list[str]] = None
-	instructions:Optional[str] = None
+	instructions:Optional[list[str]] = None
 	prep_time:Optional[int] = None
 	cook_time:Optional[int] = None
 	servings:Optional[int] = None

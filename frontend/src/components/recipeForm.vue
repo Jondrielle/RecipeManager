@@ -13,7 +13,7 @@ const form = ref({
 	name: props.recipe?.name || "",
 	description: props.recipe?.description || "",
 	ingredients: props.recipe?.ingredients || [],
-	instructions: props.recipe?.instructions || "",
+	instructions: props.recipe?.instructions || [],
 	prep_time: props.recipe?.prep_time || 0,
 	cook_time: props.recipe?.cook_time || 0,
 	servings: props.recipe?.servings || 1,
