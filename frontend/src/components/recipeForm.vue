@@ -17,7 +17,8 @@ const form = ref({
 	prep_time: props.recipe?.prep_time || 0,
 	cook_time: props.recipe?.cook_time || 0,
 	servings: props.recipe?.servings || 1,
-	difficulty: props.recipe?.difficulty || ""
+	difficulty: props.recipe?.difficulty || "",
+	image_url: props.recipe?.image_url || ""
 })
 
 function submit(){
@@ -28,11 +29,26 @@ function submit(){
 	}
 	else{
 		emit("add",form.value)
+		clearForm()
 	}
 }
 
 function cancel(){
 	emit("cancel")
+}
+
+function clearForm(){
+	form.value = {
+    id: null,
+    name: "",
+    description: "",
+    ingredients: [],
+    instructions: [],
+    prep_time: 0,
+    cook_time: 0,
+    servings: 1,
+    difficulty: ""
+  }
 }
 </script>
 
@@ -56,6 +72,8 @@ function cancel(){
 			  
 			<input v-model.number="form.servings"
 			  placeholder="Servings"></input>
+
+			<input v-model="form.image_url" placeholder="Image URL"></input>
 			  
 			<select v-model="form.difficulty">
 				<option disabled value="">Select Difficulty</option>

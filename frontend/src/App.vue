@@ -44,7 +44,8 @@ async function createRecipe(recipe){
         prep_time: recipe.prep_time,
         cook_time: recipe.cook_time,
         servings: recipe.servings,
-        difficulty: recipe.difficulty
+        difficulty: recipe.difficulty,
+        image_url: recipe.image_url
       })
     })
 
@@ -73,6 +74,11 @@ async function deleteRecipe(id){
 
     recipes.value = recipes.value.filter(recipe => recipe.id !== id)
 
+    if(selectedRecipe.value?.id === id){
+      selectedRecipe.value = null
+      isEditing.value = false
+    }
+
   }catch(error){
     console.error(error.message)
   }
@@ -87,8 +93,8 @@ async function updateRecipe(recipe){
       },
       body:JSON.stringify({
         ...recipe,
-        ingredients: recipe.ingredients.split(",").map(item => item.trim()),
-        instructions: recipe.instructions.split(",").map(item => item.trim())
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions
       })
     })
 

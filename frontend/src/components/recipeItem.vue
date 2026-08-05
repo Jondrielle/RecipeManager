@@ -29,14 +29,15 @@ function deleteRecipe(){
 			</ul>
 		</div>
 		<ol>
-			<li v-for="step in recipe.instructions"
+			<li v-for="instruction in recipe.instructions"
 				:key="instruction">
-				{{step}}
+				{{instruction}}
 			</li>
 		</ol>
 		<div class="stats">
 			<span> Prep Time: {{recipe.prep_time}} mins </span>
 			<span> Cook Time: {{recipe.cook_time}} mins </span> 
+			<span> Servings: {{recipe.servings}}</span> 
 			<span> Difficulty: {{recipe.difficulty}}</span>
 		</div>
 		<div class="buttons">

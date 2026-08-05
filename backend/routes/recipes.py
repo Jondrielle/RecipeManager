@@ -23,7 +23,8 @@ async def add_recipe(recipe:CreateRecipe):
 		prep_time = recipe.prep_time,
 		cook_time = recipe.cook_time,
 		servings = recipe.servings,
-		difficulty = recipe.difficulty
+		difficulty = recipe.difficulty,
+		image_url = recipe.image_url
 	)
 
 	recipes.append(new_recipe)
@@ -70,6 +71,9 @@ async def update_recipe(id:int, updated_recipe:UpdateRecipe):
 
 			if updated_recipe.difficulty is not None:
 				recipe.difficulty = updated_recipe.difficulty
+
+			if updated_recipe.image_url is not None:
+				recipe.image_url = updated_recipe.image_url
 
 			return {"Message:","Recipe Updated Successfully"}
 
