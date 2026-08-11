@@ -22,16 +22,18 @@ function deleteRecipe(){
 		<div class="Ingredients">
 			<h2 class="listTitle">Ingredients</h2>
 			<ul class="ingredientsContainer">
-			  <li v-for="ingredient in recipe.ingredients" :key="ingredient"
+			  <li v-for="ingredient in recipe.ingredients" :key="ingredient.name"
 			  class="list">
-			    {{ ingredient }}
+			    {{ingredient.amount}} {{ingredient.unit}} {{ingredient.name}}
 			  </li>
 			</ul>
 		</div>
 		<ol>
-			<li v-for="instruction in recipe.instructions"
-				:key="instruction">
-				{{instruction}}
+			<li
+			  v-for="(instruction, index) in recipe.instructions"
+			  :key="index"
+			>
+			  {{ instruction }}
 			</li>
 		</ol>
 		<div class="stats">
