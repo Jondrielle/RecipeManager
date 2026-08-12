@@ -39,8 +39,8 @@ async function createRecipe(recipe){
       body: JSON.stringify({
         name: recipe.name,
         description: recipe.description,
-        ingredients: recipe.ingredients.split(",").map(item => item.trim()),
-        instructions: recipe.instructions.split(",").map(item => item.trim()),
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
         prep_time: recipe.prep_time,
         cook_time: recipe.cook_time,
         servings: recipe.servings,

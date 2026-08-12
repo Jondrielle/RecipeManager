@@ -20,8 +20,6 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-@app.on_event("startup")
-def create_tables():
 	
 
 app.include_router(recipe_router)
