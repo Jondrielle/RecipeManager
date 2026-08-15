@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from enums.difficulty import Difficulty
+from enums.unit import Unit
 
 class Ingredient(BaseModel):
     name: str
     amount: float
-    unit: str
+    unit: Unit
 
 class RecipeBase(BaseModel):
 	name: str = Field(min_length=1,max_length=100)

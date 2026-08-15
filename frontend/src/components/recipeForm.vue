@@ -1,12 +1,13 @@
 <script setup>
 import {ref} from 'vue'
 
+
 const props = defineProps({
 	editMode:Boolean,
 	recipe:Object
 })
 
-const emit = defineEmits(["submit","add","edit","cancel"])
+const emit = defineEmits(["submit","add","edit","cancel","exit"])
 
 const ingredient = ref({
 	name: "",
@@ -51,6 +52,10 @@ function cancel(){
 	emit("cancel")
 }
 
+function exit(){
+	emit("exit")
+}
+
 function clearForm(){
 	form.value = {
     id: null,
@@ -67,7 +72,7 @@ function clearForm(){
 
   ingredient.value = { 
   	name: "", 
-  	amount: 0, 
+  	amount: null, 
   	unit: "" 
   }
 
@@ -109,9 +114,16 @@ function removeInstruction(index) {
 
 <template>
 	<div class="container">
-		<form @submit.prevent="submit" class="form">
+		<form @submit.prevent="submit" 
+		@keydown.enter.prevent
+		class="form">
 
 			<h2>Add Recipe</h2>
+			<button 
+				type="button" 	
+				@click="exit"
+				class="closeButton">
+				X</button>
 			<label>Recipe Details</label>
 			<div class="details">
 				<input class="fullWidth" v-model="form.name" placeholder="Name"></input>
@@ -157,10 +169,20 @@ function removeInstruction(index) {
 			      placeholder="Amount"
 			    />
 
-			    <input
-			      v-model="item.unit"
-			      placeholder="Unit"
-			    />
+			  <select v-model="item.unit">
+			  	<option disabled value="">Select Unit</option>
+			  	<option value="cup">cup</option>
+			  	<option value="tbsp">tbsp</option>
+			  	<option value="tsp">tsp</option>
+			  	<option value="oz">oz</option>
+			  	<option value="lb">lb</option>
+			  	<option value="g">g</option>
+			  	<option value="kg">kg</option>
+			  	<option value="ml">ml</option>
+			  	<option value="l">l</option>
+			  	<option value="piece">piece</option>
+
+				</select>
 
 			    <button
 			      type="button"
@@ -172,30 +194,41 @@ function removeInstruction(index) {
 
 			  <!-- New ingredient -->
 				<div class="ingredient">
-				<label>New Ingredient</label>
-				  <input
-				    v-model="ingredient.name"
-				    placeholder="Ingredient"
-				  />
+					<label>New Ingredient</label>
 
-				  <input
-				    v-model.number="ingredient.amount"
-				    type="number"
-				    placeholder="Amount"
-				  />
+					<div class="ingredientFields">
+					  <input
+					    v-model="ingredient.name"
+					    placeholder="Ingredient"
+					  />
 
-				  <input
-				    v-model="ingredient.unit"
-				    placeholder="Unit"
-				  />
+					  <input
+					    v-model.number="ingredient.amount"
+					    type="number"
+					    placeholder="Amount"
+					  />
 
-				  <button
-				    type="button"
-				    @click="addIngredient"
-				  >
-				    Add Ingredient
-				  </button>
-			  </div>
+						<select v-model="ingredient.unit">
+						  <option disabled value="">Select Unit</option>
+						  <option value="cup">cup</option>
+						  <option value="tablespoon">tbsp</option>
+						  <option value="teaspoon">tsp</option>
+						  <option value="ounce">oz</option>
+						  <option value="pound">lb</option>
+						  <option value="gram">g</option>
+						  <option value="milliliter">ml</option>
+						  <option value="liter">l</option>
+						  <option value="piece">piece</option>
+						</select>
+
+					  <button
+					    type="button"
+					    @click="addIngredient"
+					  >
+					    Add Ingredient
+					  </button>
+				  </div>
+				</div>
 			</div>
 			
 			<div class="instructionForm">
@@ -255,6 +288,7 @@ function removeInstruction(index) {
 <style scoped>
 
 .container {
+	position:relative;
   width: 600px;
   max-width: 90%;
   margin: 45px auto;
@@ -317,30 +351,52 @@ select:focus {
   gap: 10px;
 }
 
-/* Existing ingredient rows */
+/* Existing ingredients */
 
 .ingredientRow {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr) minmax(100px, 1fr) auto;
   gap: 10px;
   align-items: center;
-  padding: 10px;
+
+  padding: 12px;
+
   background-color: white;
-  border-radius: 8px;
   border: 1px solid #eaded5;
+  border-radius: 8px;
 }
 
-/* New ingredient */
+/* New ingredient container */
 
 .ingredient {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 14px;
+
   background-color: #fff8f1;
   border: 1px dashed #e5a46d;
   border-radius: 8px;
+}
+
+.ingredient > label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a6252;
+}
+
+/* New ingredient fields */
+
+.ingredientFields {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr) minmax(100px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.ingredientFields button {
+  white-space: nowrap;
 }
 
 /* =========================
@@ -432,6 +488,35 @@ button:active {
 .ingredient button:hover,
 .newInstruction button:hover {
   background-color: #568645;
+}
+
+.closeButton{
+	position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #777;
+
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background-color: #f1d8c0;
+  color: #333;
 }
 
 /* =========================

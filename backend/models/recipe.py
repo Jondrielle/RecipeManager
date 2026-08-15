@@ -1,12 +1,13 @@
 from sqlmodel import Field, SQLModel
 from enums.difficulty import Difficulty
+from enums.unit import Unit
 from typing import Optional
 from sqlalchemy import Column, JSON
 
 class Ingredient(SQLModel):
 	name: str
 	amount: float
-	unit: str
+	unit: Unit
 
 class Recipe(SQLModel, table=True):
 	id: int = Field(default=None,primary_key=True)

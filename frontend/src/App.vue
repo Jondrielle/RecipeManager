@@ -11,6 +11,8 @@ const isEditing = ref(false)
 
 const selectedRecipe = ref(null)
 
+const showForm = ref(false)
+
 async function getRecipes(){
   try{
     const response = await fetch("http://localhost:8000/")
@@ -20,9 +22,9 @@ async function getRecipes(){
     }
 
     const result = await response.json()
+    console.log(result)
 
     recipes.value = result 
-    console.log(result)
 
   }catch(error){
     console.error(error.message)
@@ -30,6 +32,7 @@ async function getRecipes(){
 }
 
 async function createRecipe(recipe){
+console.log("Adding recipe:", recipe)
   try{
     const response = await fetch("http://localhost:8000/recipe",{
       method:"POST",
@@ -130,6 +133,14 @@ function cancelForm(){
   isEditing.value = false
 }
 
+function openForm(){
+  showForm.value = true
+}
+
+function closeForm(){
+  showForm.value = false
+}
+
 onMounted(()=>{
   getRecipes()
 })
@@ -148,16 +159,19 @@ onMounted(()=>{
         @delete="deleteRecipe"
       />
     </div>
+    <button v-if="!showForm"@click="openForm">Open Add Form</button>
   </div>
 
   <div class="form">
     <recipeForm
+      v-if="showForm"
       :key="selectedRecipe?.id || 'new'"
       :recipe="selectedRecipe"
       :editMode="isEditing"
       @add="createRecipe"
       @edit="updateRecipe" 
       @cancel="cancelForm"
+      @exit="closeForm"
     />
   </div>
 
