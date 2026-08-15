@@ -85,6 +85,7 @@ async function deleteRecipe(id){
 }
 
 async function updateRecipe(recipe){
+  console.log(recipe)
   try{
     const response = await fetch(`http://localhost:8000/recipes/${recipe.id}`,{
       method:"PATCH",
@@ -97,6 +98,9 @@ async function updateRecipe(recipe){
         instructions: recipe.instructions
       })
     })
+
+    const result = await response.json()
+    console.log(result)
 
     if(!response.ok){
       throw new Error(`Status:${response.status}`)
@@ -112,7 +116,12 @@ async function updateRecipe(recipe){
 }
 
 function startEdit(recipe){
-  selectedRecipe.value = {...recipe}
+    selectedRecipe.value = {
+    ...recipe,
+    ingredients: recipe.ingredients.map(item => ({ ...item })),
+    instructions: [...recipe.instructions]
+  }
+  
   isEditing.value = true
 }
 

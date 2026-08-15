@@ -8,6 +8,7 @@ const emit = defineEmits(['edit','delete'])
 
 function editRecipe(){
 	emit('edit',props.recipe)
+	console.log("Editing Recipe")
 }
 
 function deleteRecipe(){
