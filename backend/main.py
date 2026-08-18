@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.recipes import recipe_router
 
-from database import create_engine
+from database import create_engine,create_db_and_tables
 from sqlmodel import SQLModel
 import models
+
 
 app = FastAPI()
 
@@ -20,7 +21,10 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-	
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+    
 
 app.include_router(recipe_router)
 
