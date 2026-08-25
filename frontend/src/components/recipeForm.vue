@@ -1,10 +1,10 @@
 <script setup>
 import {ref} from 'vue'
 
-
 const props = defineProps({
 	editMode:Boolean,
-	recipe:Object
+	recipe:Object,
+	loading:Boolean
 })
 
 const emit = defineEmits(["submit","add","edit","cancel","exit"])
@@ -279,7 +279,17 @@ function removeInstruction(index) {
 			</div>
 
 
-			<button class="button" type="submit">{{ editMode ? "Update Recipe" : "Add Recipe" }}</button>
+			<button
+			  class="button"
+			  type="submit"
+			  :disabled="loading"
+			>
+			  {{ loading
+			      ? (editMode ? "Updating..." : "Adding...")
+			      : (editMode ? "Update Recipe" : "Add Recipe")
+			  }}
+			</button>
+
 			<button type="button" @click="cancel">Cancel</button>
 		</form>
 	</div>
@@ -464,6 +474,11 @@ button:hover {
 
 button:active {
   transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Remove buttons */

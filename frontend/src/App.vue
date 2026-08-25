@@ -13,7 +13,14 @@ const selectedRecipe = ref(null)
 
 const showForm = ref(false)
 
+const error = ref("")
+
+const loading = ref(false)
+
 async function getRecipes(){
+  error.value = ""
+  loading.value = true
+
   try{
     const response = await fetch("http://localhost:8000/")
 
@@ -26,13 +33,18 @@ async function getRecipes(){
 
     recipes.value = result 
 
-  }catch(error){
-    console.error(error.message)
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
   }
 }
 
 async function createRecipe(recipe){
-console.log("Adding recipe:", recipe)
+  console.log("Adding recipe:", recipe)
+  error.value = ""
+  loading.value = true
+
   try{
     const response = await fetch("http://localhost:8000/recipe",{
       method:"POST",
@@ -53,19 +65,33 @@ console.log("Adding recipe:", recipe)
     })
 
     if (!response.ok) {
+      if (response.status === 422) {
+        throw new Error("Please check the recipe information.")
+      }
+
         throw new Error("Failed to create recipe");
     }
+
 
     const result = await response.json()
     recipes.value.push(result) 
 
+    error.value = ""
+
+    showForm.value = false
+    isEditing.value = false
+    selectedRecipe.value = null
+
     console.log(recipes)
-  }catch(error){
-    console.error(error.message)
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
   }
 }
 
 async function deleteRecipe(id){
+  error.value = ""
   try{
     const response = await fetch(`http://localhost:8000/recipe/${id}`,{
       method:"DELETE"
@@ -82,13 +108,14 @@ async function deleteRecipe(id){
       isEditing.value = false
     }
 
-  }catch(error){
-    console.error(error.message)
+  }catch (err) {
+    error.value = err.message
   }
 }
 
 async function updateRecipe(recipe){
   console.log(recipe)
+  error.value = ""
   try{
     const response = await fetch(`http://localhost:8000/recipes/${recipe.id}`,{
       method:"PATCH",
@@ -113,9 +140,9 @@ async function updateRecipe(recipe){
 
     selectedRecipe.value = null
     isEditing.value = false
-  }catch(error){
-    console.error(error.message)
-  } 
+  } catch (err) {
+    error.value = err.message
+  }
 }
 
 function startEdit(recipe){
@@ -129,15 +156,21 @@ function startEdit(recipe){
 }
 
 function cancelForm(){
+  error.value = ""
   selectedRecipe.value = null
   isEditing.value = false
+  showForm.value = false
 }
 
 function openForm(){
+  error.value = ""
   showForm.value = true
 }
 
-function closeForm(){
+function closeForm() {
+  error.value = ""
+  selectedRecipe.value = null
+  isEditing.value = false
   showForm.value = false
 }
 
@@ -159,15 +192,21 @@ onMounted(()=>{
         @delete="deleteRecipe"
       />
     </div>
-    <button v-if="!showForm"@click="openForm">Open Add Form</button>
+    <button v-if="!showForm"
+    @click="openForm"
+    class="openFormButton">+ Add Recipe</button>
   </div>
 
+  <p v-if="error" class="error">
+    {{ error }}
+  </p>
   <div class="form">
     <recipeForm
       v-if="showForm"
       :key="selectedRecipe?.id || 'new'"
       :recipe="selectedRecipe"
       :editMode="isEditing"
+      :loading ="loading"
       @add="createRecipe"
       @edit="updateRecipe" 
       @cancel="cancelForm"
@@ -201,5 +240,37 @@ onMounted(()=>{
     flex-direction:column;
     gap:20px;
   }
+
+  .openFormButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #e89b5a;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .openFormButton:hover {
+    background-color: #d9823b;
+    transform: translateY(-1px);
+  }
+
+  .openFormButton:active {
+    transform: translateY(0);
+  }
+
+  .error {
+  padding: 10px 14px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background: #fde2e2;
+  border: 1px solid #e8a0a0;
+  color: #a33;
+}
 
 </style>
