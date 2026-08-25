@@ -19,6 +19,12 @@ function deleteRecipe(){
 <template>
 	<div class="card">
 		<h2 class="title">{{recipe.name}}</h2>
+    <img
+      v-if="recipe.image_url"
+      :src="recipe.image_url"
+      :alt="recipe.name"
+      class="recipeImage"
+    />
 		<p>{{recipe.description}}</p>
 		<div class="Ingredients">
 			<h2 class="listTitle">Ingredients</h2>
@@ -87,6 +93,15 @@ function deleteRecipe(){
   align-items: flex-start;
   gap: 15px;
   margin-bottom: 18px;
+}
+
+.recipeImage {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+  display: block;
+  padding-top: 10px;
 }
 
 .title {

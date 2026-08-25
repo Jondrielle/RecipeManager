@@ -14,7 +14,6 @@ async def get_recipes(session: Session = Depends(get_session)):
 
 @recipe_router.post("/recipe", response_model=RecipeSchema)
 async def add_recipe(recipe:CreateRecipe,session: Session = Depends(get_session)):
-    global recipeID 
 
     new_recipe = RecipeModel(
         name = recipe.name,
