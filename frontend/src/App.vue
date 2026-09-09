@@ -22,7 +22,7 @@ async function getRecipes(){
   loading.value = true
 
   try{
-    const response = await fetch("http://localhost:8000/")
+    const response = await fetch("https://recipemanager-40pu.onrender.com")
 
     if (!response.ok){
       throw new Error(`Response status:${response.status}`)
@@ -46,7 +46,7 @@ async function createRecipe(recipe){
   loading.value = true
 
   try{
-    const response = await fetch("http://localhost:8000/recipe",{
+    const response = await fetch("https://recipemanager-40pu.onrender.com/recipe",{
       method:"POST",
       headers:{
         "Content-Type": "application/json"
@@ -93,7 +93,7 @@ async function createRecipe(recipe){
 async function deleteRecipe(id){
   error.value = ""
   try{
-    const response = await fetch(`http://localhost:8000/recipe/${id}`,{
+    const response = await fetch(`https://recipemanager-40pu.onrender.com/recipe/${id}`,{
       method:"DELETE"
     })
 
@@ -117,7 +117,7 @@ async function updateRecipe(recipe){
   console.log(recipe)
   error.value = ""
   try{
-    const response = await fetch(`http://localhost:8000/recipes/${recipe.id}`,{
+    const response = await fetch(`https://recipemanager-40pu.onrender.com/recipes/${recipe.id}`,{
       method:"PATCH",
       headers:{
         "Content-Type": "application/json"

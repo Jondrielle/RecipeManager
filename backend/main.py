@@ -10,7 +10,8 @@ import models
 app = FastAPI()
 
 origins = [
-	"http://localhost:5173"
+	"http://localhost:5173",
+	"https://recipemanaging.netlify.app"
 ]
 
 app.add_middleware(
