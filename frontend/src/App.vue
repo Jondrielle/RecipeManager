@@ -153,6 +153,7 @@ function startEdit(recipe){
   }
   
   isEditing.value = true
+  showForm.value = true
 }
 
 function cancelForm(){
