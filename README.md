@@ -299,4 +299,16 @@ Recipe Manager is a deployed full-stack application demonstrating CRUD functiona
 
 ---
 
-### Built With ❤️ and a lot of debugging
+## ⚠️ Known Limitations
+
+This project was built to practice full-stack development and CRUD operations. The current version focuses on core functionality, and some features have been intentionally left out to keep the project manageable while learning.
+
+- **No user authentication:** Recipes are not associated with individual user accounts.
+- **Basic image handling:** Recipe images are added through URLs. The application does not support direct image uploads or image hosting.
+- **Limited search and filtering:** Recipes cannot currently be searched or filtered by ingredients, categories, or difficulty.
+- **Basic recipe organization:** There are no categories, favorites, or personalized recipe collections.
+- **SQLite database:** The application uses SQLite for simplicity. A different database may be more suitable as the application grows.
+- **Limited automated testing:** Test coverage can be expanded to verify frontend behavior and backend API operations.
+
+These limitations are known and are not all planned for immediate implementation. The priority is to understand the fundamentals of Vue 3, FastAPI, REST APIs, data validation, and database operations before introducing additional complexity.
+
