@@ -193,10 +193,12 @@ onMounted(()=>{
         @delete="deleteRecipe"
       />
     </div>
-    <button v-if="!showForm"
-    @click="openForm"
-    class="openFormButton">+ Add Recipe</button>
   </div>
+
+  <button v-if="!showForm"
+    @click="openForm"
+    class="openFormButton">+ Add Recipe
+  </button>
 
   <p v-if="error" class="error">
     {{ error }}
@@ -238,9 +240,11 @@ onMounted(()=>{
   }
 
   .recipes{
-    display:flex;
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap:20px;
+    gap: 20px;
+    padding: 0 30px;
+    align-items: stretch;
   }
 
   .openFormButton {

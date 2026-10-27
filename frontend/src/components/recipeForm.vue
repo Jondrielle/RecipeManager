@@ -44,7 +44,6 @@ function submit(){
 	}
 	else{
 		emit("add",form.value)
-		clearForm()
 	}
 }
 
