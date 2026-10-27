@@ -213,6 +213,7 @@ onMounted(()=>{
       @cancel="cancelForm"
       @exit="closeForm"
     />
+    <p  v-if="recipes.length === 0">Your recipes will appear here. Add your recipe habit to get started.</p>
   </div>
 
 </template>
@@ -238,7 +239,7 @@ onMounted(()=>{
 
   .recipes{
     display:flex;
-    flex-direction:column;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap:20px;
   }
 
@@ -273,5 +274,11 @@ onMounted(()=>{
   border: 1px solid #e8a0a0;
   color: #a33;
 }
-
+  
+  .form > p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color:dark-grey;
+  }
 </style>
