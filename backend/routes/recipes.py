@@ -1,19 +1,22 @@
-from fastapi import APIRouter,HTTPException,Depends
-from schemas.recipe import CreateRecipe,UpdateRecipe
-from models.recipe import Recipe as RecipeModel
-from schemas.recipe import Recipe as RecipeSchema
-from sqlmodel import Session,select
-from database import get_session
+from typing import Annotated
 
+from database import get_session
+from fastapi import APIRouter, Depends, HTTPException
+from models.recipe import Recipe as RecipeModel
+from schemas.recipe import CreateRecipe, UpdateRecipe
+from schemas.recipe import Recipe as RecipeSchema
+from sqlmodel import Session, select
 
 recipe_router = APIRouter()
 
+sessionDeps = Annotated[Session,Depends(get_session)]
+
 @recipe_router.get("/", response_model=list[RecipeSchema])
-async def get_recipes(session: Session = Depends(get_session)):
+async def get_recipes(session: sessionDeps):
     return session.exec(select(RecipeModel)).all()
 
 @recipe_router.post("/recipe", response_model=RecipeSchema)
-async def add_recipe(recipe:CreateRecipe,session: Session = Depends(get_session)):
+async def add_recipe(recipe:CreateRecipe,session:  sessionDeps):
 
     new_recipe = RecipeModel(
         name = recipe.name,
@@ -41,7 +44,7 @@ async def add_recipe(recipe:CreateRecipe,session: Session = Depends(get_session)
     return new_recipe
 
 @recipe_router.delete("/recipe/{id}")
-async def delete_recipe(id:int, session: Session = Depends(get_session)):
+async def delete_recipe(id:int, session:  sessionDeps):
 
     recipe = session.get(RecipeModel, id)
     
@@ -57,7 +60,7 @@ async def delete_recipe(id:int, session: Session = Depends(get_session)):
     return {"message": "Recipe Deleted Successfully"}
 
 @recipe_router.patch("/recipes/{id}")
-async def update_recipe(id:int, updated_recipe:UpdateRecipe, session: Session = Depends(get_session)):
+async def update_recipe(id:int, updated_recipe:UpdateRecipe, session: sessionDeps):
     recipe = session.get(RecipeModel, id)
     
     if not recipe:
