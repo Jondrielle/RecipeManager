@@ -4,6 +4,12 @@ A full-stack recipe management application built with **Vue 3**, **FastAPI**, **
 
 Recipe Manager allows users to create, view, edit, and delete recipes through a responsive web interface backed by a REST API and persistent database.
 
+## 🌐 Live Demo
+
+- 🖥️ **Frontend (Netlify):** [Try Recipe Manager](https://grindnglow.netlify.app/)
+- ⚙️ **Backend API (Render):** [View API](https://recipemanager-40pu.onrender.com)
+- 📖 **API Documentation:** [Explore FastAPI Docs](https://recipemanager-40pu.onrender.com/docs)
+- 
 ## ✨ Features
 
 * 📖 View all saved recipes
