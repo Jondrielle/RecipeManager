@@ -6,7 +6,7 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 
 ## 🌐 Live Demo
 
-- 🖥️ **Frontend (Netlify):** [Try Recipe Manager](https://grindnglow.netlify.app/)
+- 🖥️ **Frontend (Netlify):** [Try Recipe Manager](https://recipemanaging.netlify.app/)
 - ⚙️ **Backend API (Render):** [View API](https://recipemanager-40pu.onrender.com)
 - 📖 **API Documentation:** [Explore FastAPI Docs](https://recipemanager-40pu.onrender.com/docs)
 - 
