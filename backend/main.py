@@ -1,6 +1,7 @@
-from database import create_db_and_tables
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from database import create_db_and_tables
 from routes.recipes import recipe_router
 
 app = FastAPI()

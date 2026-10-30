@@ -1,7 +1,9 @@
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
 
 from enums.difficulty import Difficulty
 from enums.unit import Unit
-from pydantic import BaseModel, Field
 
 
 class Ingredient(BaseModel):

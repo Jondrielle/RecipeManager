@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from database import get_session
 from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session, select
+
+from database import get_session
 from models.recipe import Recipe as RecipeModel
 from schemas.recipe import CreateRecipe, UpdateRecipe
 from schemas.recipe import Recipe as RecipeSchema
-from sqlmodel import Session, select
 
 recipe_router = APIRouter()
 

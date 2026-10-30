@@ -1,8 +1,10 @@
+from __future__ import annotations
+
+from sqlalchemy import JSON, Column
+from sqlmodel import Field, SQLModel
 
 from enums.difficulty import Difficulty
 from enums.unit import Unit
-from sqlalchemy import JSON, Column
-from sqlmodel import Field, SQLModel
 
 
 class Ingredient(SQLModel):
