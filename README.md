@@ -85,6 +85,42 @@ The application is split into a Vue frontend and FastAPI backend.
 
 The frontend communicates with the FastAPI backend using HTTP requests. FastAPI handles validation, database operations, and API responses.
 
+## 🧪 Running Tests
+
+This project uses **pytest** to test the FastAPI backend.
+
+From the backend directory, use:
+
+```bash
+uv run pytest
+```
+
+The automated tests cover API behavior, including:
+
+- 📝 Creating recipes with valid and missing data
+- 🔢 Verifying default recipes values
+- 🗑️ Deleting existing and nonexistent recipes
+- ✏️ Updating individual habit fields
+- 🚦 Checking HTTP status codes and response data
+
+## 🔍 Running Code Quality Checks
+
+Use Ruff to check Python code for common errors and style issues.
+
+Run the following command from the project root:
+
+```bash
+uv run ruff check .
+```
+
+## 🤖 Continuous Integration
+
+GitHub Actions automatically runs the project's tests and code-quality checks when code is pushed to the repository.
+
+The workflow installs the Python dependencies, runs Ruff, and executes the pytest test suite.
+
+The status badge at the top of this README displays the workflow's current status.
+
 ## 🔌 API Endpoints
 
 | Method   | Endpoint        | Description          |
