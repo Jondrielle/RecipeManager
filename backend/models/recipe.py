@@ -9,7 +9,7 @@ from enums.unit import Unit
 
 class Ingredient(SQLModel):
     name: str
-    amount: float
+    amount: float = Field(gt=0)
     unit: Unit
 
 class Recipe(SQLModel, table=True):

@@ -8,7 +8,7 @@ from enums.unit import Unit
 
 class Ingredient(BaseModel):
     name: str
-    amount: float
+    amount: float = Field(gt=0)
     unit: Unit
 
 class RecipeBase(BaseModel):
