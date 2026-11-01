@@ -23,6 +23,7 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
   * Unit
 * 📝 Add multiple cooking instructions
 * ⏱️ Track preparation and cooking times
+* 🕒 Display preparation and cooking times in a human-readable format (e.g. 90 minutes → 1 hr 30 min)
 * 👥 Track serving sizes
 * ⭐ Select recipe difficulty
 * 🖼️ Add recipe images using image URLs
