@@ -165,6 +165,9 @@ function removeInstruction(index) {
 			    <input
 			      v-model.number="item.amount"
 			      type="number"
+			      min="0.125"
+			      step="0.125"
+			      required
 			      placeholder="Amount"
 			    />
 
