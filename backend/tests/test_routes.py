@@ -288,17 +288,6 @@ def test_update_with_an_empty_request(client):
 
 	assert response.status_code == 422
 
-
-#Tests to do next:
-
-
-#Update with invalid data	
-	
-#Create recipe with missing required fields	Required fields are enforced
-#Create recipe with invalid ingredient unit	Invalid enum values are rejected
-#Delete a recipe, then retrieve recipes.Deleted recipe is no longer present
-#Update only servings	
-
 def test_update_servings(client):
 	create_response = client.post("/recipe",
 		json={
@@ -337,5 +326,69 @@ def test_update_servings(client):
 
 	assert response.status_code == 200
 	assert response.json()["servings"] == 3
+
+
+
+
+def test_update_recipe_invalid_data(client):
+    create_response = client.post("/recipe",
+        json={
+            "name": "Rice",
+            "servings": 4,
+            "prep_time": 20,
+            "cook_time": 30,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [],
+            "instructions": []
+        })
+
+    assert create_response.status_code == 200
+
+    recipe_id = create_response.json()["id"]
+
+    response = client.patch(f"/recipes/{recipe_id}",
+        json={
+            "servings": -5
+        })
+
+    assert response.status_code == 422
+
+def test_delete_recipe_twice(client):
+	create_response = client.post("/recipe",
+		json={
+			"name": "Rice",
+			"description": "Regular white rice",
+			"ingredients": [
+				{	
+					"name": "jasmine rice",
+					"amount": 3,
+					"unit": "cup"
+				},
+				 {	
+					"name": "water",
+					"amount": 2.5,
+					"unit": "cup"
+				},
+			],
+			"instructions":[
+				"Clean rice",
+				"Cook rice in water for 20 minutes",
+				"Serve rice"
+			],
+			"prep_time":5,
+			"cook_time":20,
+			"servings":4,
+			"difficulty": Difficulty.EASY.value,
+			"image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp"
+		})
+
+	assert create_response.status_code == 200
+	recipe_id = create_response.json()["id"]
+
+	response = client.delete(f"/recipe/{recipe_id}")
+	assert response.status_code == 200
+
+	response = client.delete(f"/recipe/{recipe_id}")
+	assert response.status_code == 404
 
 
