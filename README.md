@@ -13,11 +13,11 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 ## ✨ Features
 
 * 📖 View all saved recipes
+* 🥘 Get a Recipe
 * ➕ Create new recipes
 * ✏️ Edit existing recipes
 * 🗑️ Delete recipes
 * 🥕 Add multiple ingredients with:
-
   * Ingredient name
   * Amount
   * Unit
@@ -99,6 +99,7 @@ uv run pytest
 The automated tests cover API behavior, including:
 
 - 📝 Creating recipes with valid and missing data
+- 🔍 Retrieving recipes
 - 🔢 Verifying default recipes values
 - 🗑️ Deleting existing and nonexistent recipes
 - ✏️ Updating individual habit fields
