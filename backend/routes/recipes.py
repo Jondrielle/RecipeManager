@@ -10,32 +10,46 @@ from schemas.recipe import Recipe as RecipeSchema
 
 recipe_router = APIRouter()
 
-sessionDeps = Annotated[Session,Depends(get_session)]
+sessionDeps = Annotated[Session, Depends(get_session)]
+
 
 @recipe_router.get("/", response_model=list[RecipeSchema])
 async def get_recipes(session: sessionDeps):
     return session.exec(select(RecipeModel)).all()
 
+
+@recipe_router.get("/recipe/{recipe_id}", response_model=RecipeSchema)
+async def get_recipe(recipe_id: int, session: sessionDeps):
+    selected_recipe = session.exec(
+        select(RecipeModel).where(RecipeModel.id == recipe_id)
+    ).one_or_none()
+
+    if selected_recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    return selected_recipe
+
+
 @recipe_router.post("/recipe", response_model=RecipeSchema)
-async def add_recipe(recipe:CreateRecipe,session:  sessionDeps):
+async def add_recipe(recipe: CreateRecipe, session: sessionDeps):
 
     new_recipe = RecipeModel(
-        name = recipe.name,
-        description = recipe.description,
+        name=recipe.name,
+        description=recipe.description,
         ingredients=[
             {
                 "name": ingredient.name,
                 "amount": ingredient.amount,
-                "unit": ingredient.unit.value
+                "unit": ingredient.unit.value,
             }
             for ingredient in recipe.ingredients
         ],
-        instructions = recipe.instructions,
-        prep_time = recipe.prep_time,
-        cook_time = recipe.cook_time,
-        servings = recipe.servings,
-        difficulty = recipe.difficulty,
-        image_url = recipe.image_url
+        instructions=recipe.instructions,
+        prep_time=recipe.prep_time,
+        cook_time=recipe.cook_time,
+        servings=recipe.servings,
+        difficulty=recipe.difficulty,
+        image_url=recipe.image_url,
     )
 
     session.add(new_recipe)
@@ -44,31 +58,27 @@ async def add_recipe(recipe:CreateRecipe,session:  sessionDeps):
 
     return new_recipe
 
+
 @recipe_router.delete("/recipe/{id}")
-async def delete_recipe(id:int, session:  sessionDeps):
+async def delete_recipe(id: int, session: sessionDeps):
 
     recipe = session.get(RecipeModel, id)
-    
+
     if not recipe:
-        raise HTTPException(
-            status_code = 404,
-            detail = "Recipe Not Found"
-        )
+        raise HTTPException(status_code=404, detail="Recipe Not Found")
 
     session.delete(recipe)
     session.commit()
 
     return {"message": "Recipe Deleted Successfully"}
 
+
 @recipe_router.patch("/recipes/{id}")
-async def update_recipe(id:int, updated_recipe:UpdateRecipe, session: sessionDeps):
+async def update_recipe(id: int, updated_recipe: UpdateRecipe, session: sessionDeps):
     recipe = session.get(RecipeModel, id)
-    
+
     if not recipe:
-        raise HTTPException(
-            status_code=404,
-            detail="Recipe Not Found"
-        )
+        raise HTTPException(status_code=404, detail="Recipe Not Found")
 
     if updated_recipe.name is not None:
         recipe.name = updated_recipe.name
@@ -81,7 +91,7 @@ async def update_recipe(id:int, updated_recipe:UpdateRecipe, session: sessionDep
             {
                 "name": ingredient.name,
                 "amount": ingredient.amount,
-                "unit": ingredient.unit.value
+                "unit": ingredient.unit.value,
             }
             for ingredient in updated_recipe.ingredients
         ]

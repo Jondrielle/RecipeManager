@@ -10,328 +10,285 @@ from main import app
 
 @pytest.fixture(name="session")
 def session_fixture():
-	test_engine = create_engine("sqlite://",
-		connect_args={"check_same_thread":False},
-		poolclass=StaticPool,
-	)
+    test_engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
-	SQLModel.metadata.create_all(test_engine)
+    SQLModel.metadata.create_all(test_engine)
 
-	with Session(test_engine) as session:
-		yield session
+    with Session(test_engine) as session:
+        yield session
 
-	test_engine.dispose()
+    test_engine.dispose()
+
 
 @pytest.fixture
 def client(session):
-	def get_session_override():
-		yield session
+    def get_session_override():
+        yield session
 
-	app.dependency_overrides[get_session] = get_session_override
+    app.dependency_overrides[get_session] = get_session_override
 
-	test_client = TestClient(app)
-	yield test_client
+    test_client = TestClient(app)
+    yield test_client
 
-	app.dependency_overrides.clear()
+    app.dependency_overrides.clear()
+
 
 def test_get_recipes(client):
-	response = client.get("/")
-	
-	assert response.status_code == 200
-	assert response.json() == []
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert response.json() == []
+
 
 def test_create_valid_recipe(client):
-	response = client.post(
-		"/recipe",
-		json={
-			"name": "Red beans and rice",
-			"servings": 3,
-			"prep_time": 20,
-			"cook_time": 300,
-			"difficulty": Difficulty.HARD.value,
-			"ingredients": [
-				{
-					"name": "Rice",
-					"amount": 2,
-					"unit": "cup"
-				}
-			],
-			"instructions": [
-				"Rinse the rice",
-				"Cook the rice"
-			]
-		}
-	)
+    response = client.post(
+        "/recipe",
+        json={
+            "name": "Red beans and rice",
+            "servings": 3,
+            "prep_time": 20,
+            "cook_time": 300,
+            "difficulty": Difficulty.HARD.value,
+            "ingredients": [{"name": "Rice", "amount": 2, "unit": "cup"}],
+            "instructions": ["Rinse the rice", "Cook the rice"],
+        },
+    )
 
-	assert response.status_code == 200
-	assert response.json()["name"] == "Red beans and rice"
+    assert response.status_code == 200
+    assert response.json()["name"] == "Red beans and rice"
+
 
 def test_create_invalid_recipe(client):
-	response = client.post("/recipe",
-		json={
-			"name": "Red beans and rice",
-			"servings": 3,
-			"prep_time": 20,
-		})
+    response = client.post(
+        "/recipe",
+        json={
+            "name": "Red beans and rice",
+            "servings": 3,
+            "prep_time": 20,
+        },
+    )
 
-	assert response.status_code == 422
+    assert response.status_code == 422
+
 
 def test_delete_nonexistent_recipe(client):
-	response = client.delete("/recipe/1000")
+    response = client.delete("/recipe/1000")
 
-	assert response.status_code == 404
+    assert response.status_code == 404
+
 
 def test_delete_existent_recipe(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"servings": 3,
-			"prep_time": 20,
-			"cook_time": 300,
-			"difficulty": Difficulty.EASY.value,
-			"ingredients": [
-				{
-					"name": "Rice",
-					"amount": 2,
-					"unit": "cup"
-				},
-				{
-					"name": "Water",
-					"amount": 3,
-					"unit": "cup"
-				}
-			],
-			"instructions": [
-				"Rinse the rice",
-				"Cook the rice",
-				"Serve the rice"
-			]
-		})
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "servings": 3,
+            "prep_time": 20,
+            "cook_time": 300,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [
+                {"name": "Rice", "amount": 2, "unit": "cup"},
+                {"name": "Water", "amount": 3, "unit": "cup"},
+            ],
+            "instructions": ["Rinse the rice", "Cook the rice", "Serve the rice"],
+        },
+    )
 
-	assert create_response.status_code == 200
+    assert create_response.status_code == 200
 
-	recipe_id = create_response.json()["id"]
+    recipe_id = create_response.json()["id"]
 
-	response = client.delete(f"/recipe/{recipe_id}")
+    response = client.delete(f"/recipe/{recipe_id}")
 
-	assert response.status_code == 200
+    assert response.status_code == 200
+
 
 def test_update_recipe_single_field_name(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"servings": 3,
-			"prep_time": 20,
-			"cook_time": 300,
-			"difficulty": Difficulty.EASY.value,
-			"ingredients": [],
-			"instructions": []
-		})
-	assert create_response.status_code == 200
-	assert create_response.json()["name"] == "Rice"
-	recipe_id = create_response.json()["id"]
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "servings": 3,
+            "prep_time": 20,
+            "cook_time": 300,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [],
+            "instructions": [],
+        },
+    )
+    assert create_response.status_code == 200
+    assert create_response.json()["name"] == "Rice"
+    recipe_id = create_response.json()["id"]
 
+    response = client.patch(f"/recipes/{recipe_id}", json={"name": "Fried cabbage"})
 
-	response = client.patch(f"/recipes/{recipe_id}",
-		json={
-			"name": "Fried cabbage"
-		})
+    assert response.status_code == 200
+    assert response.json()["name"] == "Fried cabbage"
 
-	assert response.status_code == 200
-	assert response.json()["name"] == "Fried cabbage"
 
 def test_update_recipe_multiple_fields(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"servings": 5,
-			"prep_time": 2,
-			"cook_time": 20,
-			"difficulty": Difficulty.EASY.value,
-			"ingredients": [],
-			"instructions": []
-		})
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "servings": 5,
+            "prep_time": 2,
+            "cook_time": 20,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [],
+            "instructions": [],
+        },
+    )
 
-	assert create_response.status_code == 200
-	recipe_id = create_response.json()["id"]
+    assert create_response.status_code == 200
+    recipe_id = create_response.json()["id"]
 
-	response = client.patch(f"/recipes/{recipe_id}",
-		json={
-			"name": "Rice and peas",
-			"servings": 4,
-			"prep_time":4,
-			"cook_time":15,
-			"difficulty":Difficulty.MEDIUM.value,
-			"ingredients": [
-				{
-					"name": "Rice",
-					"amount": 3,
-					"unit": "cup"
-				},
-				{
-					"name": "Pigeon peas",
-					"amount": 1,
-					"unit": "cup"
-				}
-			],
-			"instructions":[
-				"Rinse rice",
-				"Rinse pigeon peas",
-				"Cook rice and peas",
-				"Serve dish"
-			]
-		})
+    response = client.patch(
+        f"/recipes/{recipe_id}",
+        json={
+            "name": "Rice and peas",
+            "servings": 4,
+            "prep_time": 4,
+            "cook_time": 15,
+            "difficulty": Difficulty.MEDIUM.value,
+            "ingredients": [
+                {"name": "Rice", "amount": 3, "unit": "cup"},
+                {"name": "Pigeon peas", "amount": 1, "unit": "cup"},
+            ],
+            "instructions": [
+                "Rinse rice",
+                "Rinse pigeon peas",
+                "Cook rice and peas",
+                "Serve dish",
+            ],
+        },
+    )
 
-	recipe_data = response.json()
+    recipe_data = response.json()
 
-	assert response.status_code == 200
+    assert response.status_code == 200
 
-	assert recipe_data["name"] == "Rice and peas"
-	assert recipe_data["servings"] == 4
-	assert recipe_data["prep_time"] == 4
-	assert recipe_data["cook_time"] == 15
-	assert recipe_data["difficulty"] == Difficulty.MEDIUM
-	assert recipe_data["ingredients"] == [{
-					"name": "Rice",
-					"amount": 3,
-					"unit": "cup"
-				},
-				{
-					"name": "Pigeon peas",
-					"amount": 1,
-					"unit": "cup"
-				}]
-	assert recipe_data["instructions"] == ["Rinse rice",
-				"Rinse pigeon peas",
-				"Cook rice and peas",
-				"Serve dish"]
+    assert recipe_data["name"] == "Rice and peas"
+    assert recipe_data["servings"] == 4
+    assert recipe_data["prep_time"] == 4
+    assert recipe_data["cook_time"] == 15
+    assert recipe_data["difficulty"] == Difficulty.MEDIUM
+    assert recipe_data["ingredients"] == [
+        {"name": "Rice", "amount": 3, "unit": "cup"},
+        {"name": "Pigeon peas", "amount": 1, "unit": "cup"},
+    ]
+    assert recipe_data["instructions"] == [
+        "Rinse rice",
+        "Rinse pigeon peas",
+        "Cook rice and peas",
+        "Serve dish",
+    ]
+
 
 def test_get_recipes_after_creating_one(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"description": "Regular white rice",
-			"ingredients": [
-				{	
-					"name": "jasmine rice",
-					"amount": 3,
-					"unit": "cup"
-				},
-				 {	
-					"name": "water",
-					"amount": 2.5,
-					"unit": "cup"
-				},
-			],
-			"instructions":[
-				"Clean rice",
-				"Cook rice in water for 20 minutes",
-				"Serve rice"
-			],
-			"prep_time":5,
-			"cook_time":20,
-			"servings":4,
-			"difficulty": Difficulty.EASY.value,
-			"image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp"
-		})
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "description": "Regular white rice",
+            "ingredients": [
+                {"name": "jasmine rice", "amount": 3, "unit": "cup"},
+                {"name": "water", "amount": 2.5, "unit": "cup"},
+            ],
+            "instructions": [
+                "Clean rice",
+                "Cook rice in water for 20 minutes",
+                "Serve rice",
+            ],
+            "prep_time": 5,
+            "cook_time": 20,
+            "servings": 4,
+            "difficulty": Difficulty.EASY.value,
+            "image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp",
+        },
+    )
 
-	assert create_response.status_code == 200
+    assert create_response.status_code == 200
 
-	response = client.get("/")
+    response = client.get("/")
 
-	data = response.json()
+    data = response.json()
 
-	assert data != []
+    assert data != []
+
 
 def test_update_nonexistent_recipe(client):
-	response = client.patch("/recipes/300",
-		json={
-			"name":"Rice"
-		})
+    response = client.patch("/recipes/300", json={"name": "Rice"})
 
-	assert response.status_code == 404
+    assert response.status_code == 404
+
 
 def test_update_with_an_empty_request(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"description": "Regular white rice",
-			"ingredients": [
-				{	
-					"name": "jasmine rice",
-					"amount": 3,
-					"unit": "cup"
-				},
-				 {	
-					"name": "water",
-					"amount": 2.5,
-					"unit": "cup"
-				},
-			],
-			"instructions":[
-				"Clean rice",
-				"Cook rice in water for 20 minutes",
-				"Serve rice"
-			],
-			"prep_time":5,
-			"cook_time":20,
-			"servings":4,
-			"difficulty": Difficulty.EASY.value,
-			"image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp"
-		})
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "description": "Regular white rice",
+            "ingredients": [
+                {"name": "jasmine rice", "amount": 3, "unit": "cup"},
+                {"name": "water", "amount": 2.5, "unit": "cup"},
+            ],
+            "instructions": [
+                "Clean rice",
+                "Cook rice in water for 20 minutes",
+                "Serve rice",
+            ],
+            "prep_time": 5,
+            "cook_time": 20,
+            "servings": 4,
+            "difficulty": Difficulty.EASY.value,
+            "image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp",
+        },
+    )
 
-	recipe_id = create_response.json()["id"]
+    recipe_id = create_response.json()["id"]
 
-	assert create_response.status_code == 200
+    assert create_response.status_code == 200
 
-	response = client.patch(f"/recipes/{recipe_id}")
+    response = client.patch(f"/recipes/{recipe_id}")
 
-	assert response.status_code == 422
+    assert response.status_code == 422
+
 
 def test_update_servings(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"servings": 4,
-			"prep_time": 20,
-			"cook_time": 300,
-			"difficulty": Difficulty.EASY.value,
-			"ingredients": [
-				{
-					"name": "Rice",
-					"amount": 2,
-					"unit": "cup"
-				},
-				{
-					"name": "Water",
-					"amount": 4,
-					"unit": "cup"
-				}
-			],
-			"instructions": [
-				"Rinse the rice",
-				"Cook the rice",
-				"Serve the rice"
-			]
-		})
-	recipe_id = create_response.json()["id"]
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "servings": 4,
+            "prep_time": 20,
+            "cook_time": 300,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [
+                {"name": "Rice", "amount": 2, "unit": "cup"},
+                {"name": "Water", "amount": 4, "unit": "cup"},
+            ],
+            "instructions": ["Rinse the rice", "Cook the rice", "Serve the rice"],
+        },
+    )
+    recipe_id = create_response.json()["id"]
 
-	assert create_response.status_code == 200
-	assert create_response.json()["servings"] == 4
+    assert create_response.status_code == 200
+    assert create_response.json()["servings"] == 4
 
-	response = client.patch(f"/recipes/{recipe_id}",
-		json={
-			"servings": 3
-		})
+    response = client.patch(f"/recipes/{recipe_id}", json={"servings": 3})
 
-	assert response.status_code == 200
-	assert response.json()["servings"] == 3
+    assert response.status_code == 200
+    assert response.json()["servings"] == 3
 
 
-
-
-def test_update_recipe_invalid_data(client):
-    create_response = client.post("/recipe",
+def test_get_existent_recipe(client):
+    create_response = client.post(
+        "/recipe",
         json={
             "name": "Rice",
             "servings": 4,
@@ -339,56 +296,87 @@ def test_update_recipe_invalid_data(client):
             "cook_time": 30,
             "difficulty": Difficulty.EASY.value,
             "ingredients": [],
-            "instructions": []
-        })
+            "instructions": [],
+        },
+    )
+
+    assert create_response.status_code == 200
+    data = create_response.json()
+    recipe_id = data["id"]
+
+    response = client.get(f"/recipe/{recipe_id}")
+    recipe = response.json()
+
+    assert response.status_code == 200
+
+    assert recipe["id"] == recipe_id
+    assert recipe["name"] == data["name"]
+    assert recipe["servings"] == data["servings"]
+    assert recipe["prep_time"] == data["prep_time"]
+    assert recipe["cook_time"] == data["cook_time"]
+    assert recipe["difficulty"] == data["difficulty"]
+    assert recipe["ingredients"] == data["ingredients"]
+    assert recipe["instructions"] == data["instructions"]
+
+
+def test_get_nonexistent_recipe(client):
+    response = client.get("/recipe/100000")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Recipe not found"
+
+
+def test_update_recipe_invalid_data(client):
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "servings": 4,
+            "prep_time": 20,
+            "cook_time": 30,
+            "difficulty": Difficulty.EASY.value,
+            "ingredients": [],
+            "instructions": [],
+        },
+    )
 
     assert create_response.status_code == 200
 
     recipe_id = create_response.json()["id"]
 
-    response = client.patch(f"/recipes/{recipe_id}",
-        json={
-            "servings": -5
-        })
+    response = client.patch(f"/recipes/{recipe_id}", json={"servings": -5})
 
     assert response.status_code == 422
 
+
 def test_delete_recipe_twice(client):
-	create_response = client.post("/recipe",
-		json={
-			"name": "Rice",
-			"description": "Regular white rice",
-			"ingredients": [
-				{	
-					"name": "jasmine rice",
-					"amount": 3,
-					"unit": "cup"
-				},
-				 {	
-					"name": "water",
-					"amount": 2.5,
-					"unit": "cup"
-				},
-			],
-			"instructions":[
-				"Clean rice",
-				"Cook rice in water for 20 minutes",
-				"Serve rice"
-			],
-			"prep_time":5,
-			"cook_time":20,
-			"servings":4,
-			"difficulty": Difficulty.EASY.value,
-			"image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp"
-		})
+    create_response = client.post(
+        "/recipe",
+        json={
+            "name": "Rice",
+            "description": "Regular white rice",
+            "ingredients": [
+                {"name": "jasmine rice", "amount": 3, "unit": "cup"},
+                {"name": "water", "amount": 2.5, "unit": "cup"},
+            ],
+            "instructions": [
+                "Clean rice",
+                "Cook rice in water for 20 minutes",
+                "Serve rice",
+            ],
+            "prep_time": 5,
+            "cook_time": 20,
+            "servings": 4,
+            "difficulty": Difficulty.EASY.value,
+            "image_url": "https://www.tarladalal.com/thumb/500x375/media/recipe/mainphoto/2025/08/11/perfect_steamed_basmati_rice.webp",
+        },
+    )
 
-	assert create_response.status_code == 200
-	recipe_id = create_response.json()["id"]
+    assert create_response.status_code == 200
+    recipe_id = create_response.json()["id"]
 
-	response = client.delete(f"/recipe/{recipe_id}")
-	assert response.status_code == 200
+    response = client.delete(f"/recipe/{recipe_id}")
+    assert response.status_code == 200
 
-	response = client.delete(f"/recipe/{recipe_id}")
-	assert response.status_code == 404
-
-
+    response = client.delete(f"/recipe/{recipe_id}")
+    assert response.status_code == 404
