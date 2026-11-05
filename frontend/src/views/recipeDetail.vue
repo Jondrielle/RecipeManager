@@ -1,11 +1,15 @@
 <script setup>
-    import recipeItem from "./components/recipeItem.vue"
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 </script>
 
 <template>
     <div>
-        <h1>Recipe Detail Page</h1>
+        <h1>Recipe Detail Page </h1>
+        <p>Recipe ID: {{ route.params.id }}</p>
     </div>
 </template>
 
