@@ -20,7 +20,7 @@ function deleteRecipe() {
 <template>
   <div class="card">
     <h2 class="title">{{ recipe.name }}</h2>
-
+    <RouterLink :to="`/recipes/${recipe.id}`">View Recipe</RouterLink>
     <img
       v-if="recipe.image_url"
       :src="recipe.image_url"
