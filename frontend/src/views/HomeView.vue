@@ -22,7 +22,7 @@ async function getRecipes(){
   loading.value = true
 
   try{
-    const response = await fetch("https://recipemanager-40pu.onrender.com")
+    const response = await fetch("https://recipemanager-40pu.onrender.com/")
 
     if (!response.ok){
       throw new Error(`Response status:${response.status}`)
@@ -186,7 +186,13 @@ onMounted(()=>{
     <h1 class="header">Recipe Manager</h1>
   </div>
 
-  <div class="recipes">
+  <p v-if="loading">Loading recipes...</p>
+
+  <p v-if="error" class="error">
+    {{ error }}
+  </p>
+
+  <div v-if="!loading && !error" class="recipes">
     <div v-for="recipe in recipes" :key="recipe.id">
       <recipeItem
         :recipe="recipe"
@@ -196,28 +202,32 @@ onMounted(()=>{
     </div>
   </div>
 
-  <button v-if="!showForm"
+  <button
+    v-if="!showForm"
     @click="openForm"
-    class="openFormButton">+ Add Recipe
+    class="openFormButton"
+  >
+    + Add Recipe
   </button>
 
-  <p v-if="error" class="error">
-    {{ error }}
-  </p>
   <div class="form">
     <recipeForm
       v-if="showForm"
       :key="selectedRecipe?.id || 'new'"
       :recipe="selectedRecipe"
       :editMode="isEditing"
-      :loading ="loading"
+      :loading="loading"
       @add="createRecipe"
-      @edit="updateRecipe" 
+      @edit="updateRecipe"
       @cancel="cancelForm"
       @exit="closeForm"
     />
-    <p  v-if="recipes.length === 0">Your recipes will appear here. Add your recipe habit to get started.</p>
+
+    <p v-if="!loading && !error && recipes.length === 0">
+      Your recipes will appear here. Add your recipe habit to get started.
+    </p>
   </div>
+  
   <RouterView></RouterView>
 </template>
 

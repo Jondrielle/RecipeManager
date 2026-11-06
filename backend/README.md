@@ -289,6 +289,16 @@ Possible future features include:
 
 These features are intentionally outside the current MVP.
 
+
+## Data Persistence
+
+This application currently uses SQLite for database storage and is deployed on Render.
+
+Because Render's filesystem is ephemeral, recipes created, updated, or deleted in production may not persist after the backend service restarts, spins down, or is redeployed.
+
+Users can add, edit, and delete recipes, but their saved data is not guaranteed to remain available permanently.
+
+
 ---
 
 ## 📌 Project Status

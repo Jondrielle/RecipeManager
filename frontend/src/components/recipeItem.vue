@@ -20,42 +20,20 @@ function deleteRecipe() {
 <template>
   <div class="card">
     <h2 class="title">{{ recipe.name }}</h2>
-    <RouterLink :to="`/recipes/${recipe.id}`">View Recipe</RouterLink>
-    <img
-      v-if="recipe.image_url"
-      :src="recipe.image_url"
-      :alt="recipe.name"
-      class="recipeImage"
-    />
+    <RouterLink :to="`/recipes/${recipe.id}`">
+      <img
+        v-if="recipe.image_url"
+        :src="recipe.image_url"
+        :alt="recipe.name"
+        class="recipeImage"
+      />
+      <div v-else class="no-image">
+        <p>No image available</p>
+      </div>
+    </RouterLink>
+    
 
     <p>{{ recipe.description }}</p>
-
-    <div class="ingredients">
-      <h2 class="listTitle">Ingredients</h2>
-
-      <ul class="ingredientsContainer">
-        <li
-          v-for="ingredient in recipe.ingredients"
-          :key="ingredient.name"
-          class="ingredientItem"
-        >
-          {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }}
-        </li>
-      </ul>
-    </div>
-
-    <div class="instructions">
-      <h2 class="listTitle">Instructions</h2>
-
-      <ol>
-        <li
-          v-for="(instruction, index) in recipe.instructions"
-          :key="index"
-        >
-          {{ instruction }}
-        </li>
-      </ol>
-    </div>
 
     <div class="stats">
       <div class="stat">
@@ -106,32 +84,8 @@ function deleteRecipe() {
   margin-bottom: 15px;
 }
 
-.ingredients {
-  margin-top: 20px;
-}
-
 .listTitle {
   margin-bottom: 10px;
-}
-
-.ingredientsContainer {
-  padding-left: 20px;
-}
-
-.ingredientItem {
-  margin-bottom: 6px;
-}
-
-.instructions {
-  margin-top: 20px;
-}
-
-.instructions ol {
-  padding-left: 20px;
-}
-
-.instructions li {
-  margin-bottom: 8px;
 }
 
 .stats {
@@ -179,5 +133,15 @@ function deleteRecipe() {
   cursor: pointer;
   border: none;
   border-radius: 6px;
+}
+
+.no-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  color: #777;
 }
 </style>
