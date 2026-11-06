@@ -1,26 +1,30 @@
 <script setup>
 import {ref,onMounted} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { formatTime } from '@/utils/formatTime'
 
 const router = useRouter()
 const route = useRoute()
 
 const selectedRecipe = ref()
+const error = ref('')
 
 async function getRecipe(){
     try{
          const response = await fetch(`https://recipemanager-40pu.onrender.com/recipe/${route.params.id}`)
-         selectedRecipe.value = await response.json()
 
         if(!response.ok){
             throw new Error(`Status code: ${response.status}`)
         }
-        else{
-            console.log(`Selected Recipe: ${selectedRecipe.value}`)
-        }
+
+        selectedRecipe.value = await response.json()
+
+        console.log(`Selected Recipe: ${selectedRecipe.value}`)
+
         
     }
-    catch(err){
+    catch (err) {
+        error.value = err.message
         console.error(err)
     }
 
@@ -31,7 +35,18 @@ onMounted(()=>{getRecipe()})
 
 <template>
     <div v-if="selectedRecipe">
-        <h2>{{ selectedRecipe.name }}</h2>
+        <div class="details">
+            <div class="title">
+                <h2>{{ selectedRecipe.name }}</h2>
+                <p>{{ selectedRecipe.description }}</p>
+            </div>
+            <div class="stats">
+                <span>Prep time: {{ formatTime(selectedRecipe.prep_time) }}</span>
+                <span>Cook time: {{ formatTime(selectedRecipe.cook_time) }}</span>
+                <span>Servings: {{ selectedRecipe.servings }}</span>
+                <span>Difficulty: {{ selectedRecipe.difficulty }}</span>
+            </div>
+        </div>
             <img
                 v-if="selectedRecipe.image_url"
                 :src="selectedRecipe.image_url"
@@ -43,16 +58,33 @@ onMounted(()=>{getRecipe()})
             </div>
         <div class="container">
             <div class="ingredients">
-                <label class="label">Ingredients</label>
-                <ul v-for="ingredient in selectedRecipe.ingredients" :key="ingredient">{{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }}</ul>
+                <h3 class="label">Ingredients</h3>
+                <ul>
+                    <li
+                        v-for="(ingredient, index) in selectedRecipe.ingredients"
+                        :key="index"
+                    >
+                        {{ ingredient.amount }}
+                        {{ ingredient.unit }}
+                        {{ ingredient.name }}
+                    </li>
+                 </ul>
             </div>
             <div class="vertical-divider"></div>
             <div class="instructions">
-                <label class="label">Directions</label>
-                <ul v-for="instruction in selectedRecipe.instructions" :key="instruction">{{instruction}}</ul>
+                <h3 class="label">Directions</h3>
+                <ol>
+                    <li
+                        v-for="(instruction, index) in selectedRecipe.instructions"
+                        :key="index"
+                        >
+                    {{ instruction }}
+                    </li>
+                </ol>
             </div>
         </div>
     </div> 
+    <p v-else-if="error">{{ error }}</p>
     <p v-else>Loading recipe...</p>
 </template>
 
@@ -62,10 +94,12 @@ onMounted(()=>{getRecipe()})
         flex-direction: row;
         align-items: stretch;
         justify-content: center;
-        border: 2px solid red;
-        border-radius: 5px;
         padding: 20px;
         gap: 20px;
+    }
+
+    .container ul{
+        text-transform: capitalize;
     }
 
     .image{
@@ -73,7 +107,6 @@ onMounted(()=>{getRecipe()})
         height: 250px;
         object-fit: cover;
         border-radius: 5px;
-        justify-content: center;
     }
 
     .no-image {
@@ -88,13 +121,18 @@ onMounted(()=>{getRecipe()})
 
     .ingredients {
         flex: 1;
-        border: 2px solid gray;
+        border: 1px solid gray;
         border-radius: 15px;
-        padding:15px;
+        background-color: rgb(227, 225, 225);
+        padding: 20px;
     }
 
-    .instructions {
-        flex: 1;
+    .instructions ol {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-right: 20px;
+        line-height: 1.6;
     }
 
    .vertical-divider {
@@ -106,5 +144,38 @@ onMounted(()=>{getRecipe()})
         display:flex;
         justify-content: center;
         font-size: 35px;
+    }
+
+    .details {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .title{
+        text-transform: capitalize;
+        padding-left: 35px;
+    }
+
+    .title h2 { 
+        font-size: 55px;
+        padding-top: 20px;
+        margin: 0;
+    }
+
+    .title p {
+        font-size: 19px;
+        font-style: italic;
+        padding-left: 5px;
+    }
+
+    .stats {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+        padding: 30px;
     }
 </style>
