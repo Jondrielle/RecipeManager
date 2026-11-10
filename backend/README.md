@@ -9,6 +9,7 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 * 📖 View all saved recipes
 * ➕ Create new recipes
 * ✏️ Edit existing recipes
+* ❤️ Favorite and unfavorite recipes
 * 🗑️ Delete recipes
 * 🥕 Add multiple ingredients with:
 
@@ -281,7 +282,6 @@ Possible future features include:
 * User authentication
 * Recipe search and filtering
 * Recipe categories
-* Favorites
 * User-specific recipe collections
 * PostgreSQL
 * Improved image handling
