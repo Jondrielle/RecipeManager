@@ -23,13 +23,7 @@ function setIsFavorite(){
 
 <template>
   <div class="card">
-    <h2 class="title">{{ recipe.name }}</h2>
-    <button
-      type="button"
-      @click="setIsFavorite"
-    >
-      {{ recipe.is_favorite ? '♥️' : '♡' }}
-    </button>
+    <h2 class="title">{{ recipe.name }}{{ recipe.is_favorite ? '♥️' : '♡' }}</h2>
     <RouterLink :to="`/recipes/${recipe.id}`">
       <img
         v-if="recipe.image_url"

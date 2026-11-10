@@ -9,6 +9,41 @@ const route = useRoute()
 const selectedRecipe = ref()
 const error = ref('')
 
+const updatingFavorite = ref(false)
+
+async function toggleFavorite() {
+  if (!selectedRecipe.value || updatingFavorite.value) return
+
+  updatingFavorite.value = true
+
+  try {
+    const response = await fetch(
+      `https://recipemanager-40pu.onrender.com/recipes/${route.params.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          is_favorite: !selectedRecipe.value.is_favorite
+        })
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Status: ${response.status}`)
+    }
+
+    const updatedRecipe = await response.json()
+    selectedRecipe.value = updatedRecipe
+
+  } catch (err) {
+    console.error('Failed to update favorite:', err)
+  } finally {
+    updatingFavorite.value = false
+  }
+}
+
 async function getRecipe(){
     try{
          const response = await fetch(`https://recipemanager-40pu.onrender.com/recipe/${route.params.id}`)
@@ -36,10 +71,25 @@ onMounted(()=>{getRecipe()})
 <template>
     <div v-if="selectedRecipe">
         <div class="details">
-            <div class="title">
+            <div class="title-row">
                 <h2>{{ selectedRecipe.name }}</h2>
-                <p>{{ selectedRecipe.description }}</p>
+
+                <button
+                    type="button"
+                    class="favorite-button"
+                    :class="{ active: selectedRecipe.is_favorite }"
+                    :disabled="updatingFavorite"
+                    :aria-pressed="!!selectedRecipe.is_favorite"
+                    :aria-label="selectedRecipe.is_favorite
+                        ? 'Remove from favorites'
+                        : 'Add to favorites'"
+                    @click="toggleFavorite"
+                >
+                    {{ selectedRecipe.is_favorite ? '♥' : '♡' }}
+                </button>
             </div>
+
+            <p>{{ selectedRecipe.description }}</p>
             <div class="stats">
                 <span>Prep time: {{ formatTime(selectedRecipe.prep_time) }}</span>
                 <span>Cook time: {{ formatTime(selectedRecipe.cook_time) }}</span>
@@ -178,4 +228,41 @@ onMounted(()=>{getRecipe()})
         align-items: flex-end;
         padding: 30px;
     }
+
+    .title-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .title-row h2 {
+        font-size: 55px;
+        margin: 0;
+    }
+
+    .favorite-button {
+        background: transparent;
+        border: none;
+        font-size: 40px;
+        color: #888;
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .favorite-button:hover {
+        transform: scale(1.15);
+    }
+
+    .favorite-button.active {
+        color: #e63946;
+    }
+
+    .favorite-button:focus-visible {
+        outline: 2px solid #e63946;
+        outline-offset: 4px;
+        border-radius: 5px;
+    }
+
 </style>
