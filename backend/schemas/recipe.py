@@ -11,30 +11,36 @@ class Ingredient(BaseModel):
     amount: float = Field(gt=0)
     unit: Unit
 
+
 class RecipeBase(BaseModel):
-	name: str = Field(min_length=1,max_length=100)
-	description:str | None = Field(default=None, max_length=500)
-	ingredients:list[Ingredient]
-	instructions:list[str]
-	prep_time:int = Field(ge=0)
-	cook_time:int = Field(ge=0)
-	servings:int = Field(gt=0)
-	difficulty: Difficulty
-	image_url:str | None = None
+    name: str = Field(min_length=1, max_length=100)
+    description: str | None = Field(default=None, max_length=500)
+    ingredients: list[Ingredient]
+    instructions: list[str]
+    prep_time: int = Field(ge=0)
+    cook_time: int = Field(ge=0)
+    servings: int = Field(gt=0)
+    difficulty: Difficulty
+    image_url: str | None = None
+    is_favorite: bool = Field(default=False)
+
 
 class Recipe(RecipeBase):
-	id: int
+    id: int
+
 
 class CreateRecipe(RecipeBase):
-	pass
+    pass
+
 
 class UpdateRecipe(BaseModel):
-	name: str | None = Field(default=None,min_length=1,max_length=100)
-	description:str | None = Field(default=None,max_length=500)
-	ingredients:list[Ingredient] | None = None
-	instructions:list[str] | None = None
-	prep_time:int | None = Field(default=None,ge=0)
-	cook_time:int | None = Field(default=None,ge=0)
-	servings:int | None = Field(default=None,gt=0)
-	difficulty: Difficulty | None = None
-	image_url:str | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    description: str | None = Field(default=None, max_length=500)
+    ingredients: list[Ingredient] | None = None
+    instructions: list[str] | None = None
+    prep_time: int | None = Field(default=None, ge=0)
+    cook_time: int | None = Field(default=None, ge=0)
+    servings: int | None = Field(default=None, gt=0)
+    difficulty: Difficulty | None = None
+    image_url: str | None = None
+    is_favorite: bool | None = None

@@ -145,6 +145,39 @@ async function updateRecipe(recipe){
   }
 }
 
+async function updateFavorite(recipe) {
+  try {
+    const response = await fetch(
+      `https://recipemanager-40pu.onrender.com/recipes/${recipe.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          is_favorite: !recipe.is_favorite
+        })
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Status: ${response.status}`)
+    }
+
+    const updatedRecipe = await response.json()
+
+    recipes.value = recipes.value.map(r =>
+      r.id === updatedRecipe.id ? updatedRecipe : r
+    )
+
+    console.log('Favorite updated:', updatedRecipe.is_favorite)
+
+  } catch (err) {
+    error.value = err.message
+    console.error('Failed to update favorite:', err)
+  }
+}
+
 function startEdit(recipe){
     selectedRecipe.value = {
     ...recipe,
@@ -192,12 +225,13 @@ onMounted(()=>{
     {{ error }}
   </p>
 
-  <div v-if="!loading && !error" class="recipes">
+  <div v-if="!loading" class="recipes"> 
     <div v-for="recipe in recipes" :key="recipe.id">
       <recipeItem
         :recipe="recipe"
         @edit="startEdit"
         @delete="deleteRecipe"
+        @setFavorite="updateFavorite"
       />
     </div>
   </div>
@@ -227,8 +261,6 @@ onMounted(()=>{
       Your recipes will appear here. Add your recipe habit to get started.
     </p>
   </div>
-  
-  <RouterView></RouterView>
 </template>
 
 <style scoped>

@@ -114,6 +114,9 @@ async def update_recipe(id: int, updated_recipe: UpdateRecipe, session: sessionD
     if updated_recipe.image_url is not None:
         recipe.image_url = updated_recipe.image_url
 
+    if updated_recipe.is_favorite is not None:
+        recipe.is_favorite = updated_recipe.is_favorite
+
     session.add(recipe)
     session.commit()
     session.refresh(recipe)

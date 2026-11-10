@@ -6,7 +6,7 @@ const props = defineProps({
   recipe: Object
 })
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete','setFavorite'])
 
 function editRecipe() {
   emit('edit', props.recipe)
@@ -15,11 +15,21 @@ function editRecipe() {
 function deleteRecipe() {
   emit('delete', props.recipe.id)
 }
+
+function setIsFavorite(){
+  emit('setFavorite', props.recipe)
+}
 </script>
 
 <template>
   <div class="card">
     <h2 class="title">{{ recipe.name }}</h2>
+    <button
+      type="button"
+      @click="setIsFavorite"
+    >
+      {{ recipe.is_favorite ? '♥️' : '♡' }}
+    </button>
     <RouterLink :to="`/recipes/${recipe.id}`">
       <img
         v-if="recipe.image_url"
