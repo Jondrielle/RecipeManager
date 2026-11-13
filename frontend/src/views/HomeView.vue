@@ -9,6 +9,8 @@ const recipes = ref([])
 
 const isEditing = ref(false)
 
+const showFavorites = ref(false)
+
 const selectedRecipe = ref(null)
 
 const showForm = ref(false)
@@ -20,16 +22,18 @@ const loading = ref(false)
 async function getRecipes(){
   error.value = ""
   loading.value = true
-
+ 
   try{
-    const response = await fetch("https://recipemanager-40pu.onrender.com/")
+
+    const response = await fetch(`https://recipemanager-40pu.onrender.com/?favorites_only=${showFavorites.value}`)
 
     if (!response.ok){
       throw new Error(`Response status:${response.status}`)
     }
 
     const result = await response.json()
-    console.log(result)
+   console.log("Show favorites:", showFavorites.value)
+   console.log("Recipes returned:", result)
 
     recipes.value = result 
 
@@ -164,14 +168,8 @@ async function updateFavorite(recipe) {
       throw new Error(`Status: ${response.status}`)
     }
 
-    const updatedRecipe = await response.json()
-
-    recipes.value = recipes.value.map(r =>
-      r.id === updatedRecipe.id ? updatedRecipe : r
-    )
-
-    console.log('Favorite updated:', updatedRecipe.is_favorite)
-
+   
+    await getRecipes()
   } catch (err) {
     error.value = err.message
     console.error('Failed to update favorite:', err)
@@ -208,6 +206,10 @@ function closeForm() {
   showForm.value = false
 }
 
+function setShowFavorites(){
+    showFavorites.value = !showFavorites.value
+    getRecipes()
+}
 
 onMounted(()=>{
   getRecipes()
@@ -220,6 +222,7 @@ onMounted(()=>{
   </div>
 
   <p v-if="loading">Loading recipes...</p>
+  <button @click="setShowFavorites">{{showFavorites ? "Hide Favorites" : "Show Favorites"}}</button>
 
   <p v-if="error" class="error">
     {{ error }}
@@ -258,7 +261,9 @@ onMounted(()=>{
     />
 
     <p v-if="!loading && !error && recipes.length === 0">
-      Your recipes will appear here. Add your recipe habit to get started.
+      {{showFavorites
+      ? "You don't have any favorite recipes yet."
+      : "Your recipes will appear here. Add a recipe to get started."}}
     </p>
   </div>
 </template>

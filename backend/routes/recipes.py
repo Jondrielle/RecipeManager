@@ -14,8 +14,13 @@ sessionDeps = Annotated[Session, Depends(get_session)]
 
 
 @recipe_router.get("/", response_model=list[RecipeSchema])
-async def get_recipes(session: sessionDeps):
-    return session.exec(select(RecipeModel)).all()
+async def get_recipes(session: sessionDeps, favorites_only: bool = False):
+    statement = select(RecipeModel)
+
+    if favorites_only:
+        statement = statement.where(RecipeModel.is_favorite == True)
+
+    return session.exec(statement).all()
 
 
 @recipe_router.get("/recipe/{recipe_id}", response_model=RecipeSchema)
