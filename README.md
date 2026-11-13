@@ -24,6 +24,9 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 * 📝 Add multiple cooking instructions
 * ⏱️ Track preparation and cooking times
 * 🕒 Display preparation and cooking times in a human-readable format (e.g. 90 minutes → 1 hr 30 min)
+* View individual recipes on a dedicated details page
+*  Mark and unmark recipes as favorites
+* Filter recipes to display favorites only
 * 👥 Track serving sizes
 * ⭐ Select recipe difficulty
 * 🖼️ Add recipe images using image URLs
@@ -38,6 +41,7 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 ### Frontend
 
 * **Vue 3**
+* **Vue Router**
 * **Vite**
 * JavaScript
 * HTML
@@ -54,6 +58,8 @@ Recipe Manager allows users to create, view, edit, and delete recipes through a 
 ### Database
 
 * **SQLite**
+* **SQLModel**
+* **SQLAlchemy**
 
 ### Deployment
 
@@ -125,12 +131,14 @@ The status badge at the top of this README displays the workflow's current statu
 
 ## 🔌 API Endpoints
 
-| Method   | Endpoint        | Description          |
-| -------- | --------------- | -------------------- |
-| `GET`    | `/`             | Retrieve all recipes |
-| `POST`   | `/recipe`       | Create a recipe      |
-| `PATCH`  | `/recipes/{id}` | Update a recipe      |
-| `DELETE` | `/recipe/{id}`  | Delete a recipe      |
+| Method   | Endpoint               | Description                                              |
+|----------|------------------------|----------------------------------------------------------|
+| `GET`    | `/`                    | Retrieve all recipes                                     |
+| `GET`    | `/?favorites_only=true`| Retrieve favorite recipes only                           |
+| `GET`    | `/recipe/{recipe_id}`  | Retrieve a single recipe                                 |
+| `POST`   | `/recipe`              | Create a new recipe                                      |
+| `PATCH`  | `/recipes/{id}`        | Update an existing recipe, including its favorite status |
+| `DELETE` | `/recipe/{id}`         | Delete a recipe                                          |
 
 The API uses JSON for request and response data.
 
