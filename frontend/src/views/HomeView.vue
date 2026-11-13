@@ -5,6 +5,8 @@ import recipeItem from "../components/recipeItem.vue"
 
 import recipeForm from "../components/recipeForm.vue"
 
+import { toggleFavorite as toggleFavoriteAPI } from '@/utils/toggleFavorite'
+
 const recipes = ref([])
 
 const isEditing = ref(false)
@@ -76,9 +78,7 @@ async function createRecipe(recipe){
         throw new Error("Failed to create recipe");
     }
 
-
-    const result = await response.json()
-    recipes.value.push(result) 
+    await getRecipes() 
 
     error.value = ""
 
@@ -150,25 +150,10 @@ async function updateRecipe(recipe){
 }
 
 async function updateFavorite(recipe) {
+  error.value = ''
+
   try {
-    const response = await fetch(
-      `https://recipemanager-40pu.onrender.com/recipes/${recipe.id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          is_favorite: !recipe.is_favorite
-        })
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error(`Status: ${response.status}`)
-    }
-
-   
+    await toggleFavoriteAPI(recipe)
     await getRecipes()
   } catch (err) {
     error.value = err.message
@@ -222,7 +207,7 @@ onMounted(()=>{
   </div>
 
   <p v-if="loading">Loading recipes...</p>
-  <button @click="setShowFavorites">{{showFavorites ? "Hide Favorites" : "Show Favorites"}}</button>
+  <button class="favoritesButton" @click="setShowFavorites">{{showFavorites ? "Show All Recipes" : "Show Favorites"}}</button>
 
   <p v-if="error" class="error">
     {{ error }}
@@ -319,12 +304,12 @@ onMounted(()=>{
   }
 
   .error {
-  padding: 10px 14px;
-  margin: 10px 0;
-  border-radius: 8px;
-  background: #fde2e2;
-  border: 1px solid #e8a0a0;
-  color: #a33;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background: #fde2e2;
+    border: 1px solid #e8a0a0;
+    color: #a33;
 }
   
   .form > p {
@@ -333,4 +318,40 @@ onMounted(()=>{
     justify-content: center;
     color:dark-grey;
   }
+
+  .favoritesButton {
+    display: block;
+    margin: 0 30px 25px auto;
+    padding: 10px 20px;
+
+    background-color: white;
+    color: #d9823b;
+    border: 2px solid #e89b5a;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.favoritesButton:hover {
+  background-color: #fff0e6;
+  transform: translateY(-2px);
+}
+
+.favoritesButton.active {
+  background-color: #e89b5a;
+  color: white;
+}
+
+.favoritesButton.active:hover {
+  background-color: #d9823b;
+}
+
+.favoritesButton:focus-visible {
+  outline: 2px solid #d9823b;
+  outline-offset: 3px;
+}
 </style>

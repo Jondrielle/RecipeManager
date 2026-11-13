@@ -1,0 +1,20 @@
+export async function toggleFavorite(recipe) {
+    const response = await fetch(
+        `https://recipemanager-40pu.onrender.com/recipes/${recipe.id}`,
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                is_favorite: !recipe.is_favorite
+            })
+        }
+    )
+
+    if (!response.ok) {
+        throw new Error(`Status: ${response.status}`)
+    }
+
+    return await response.json()
+}

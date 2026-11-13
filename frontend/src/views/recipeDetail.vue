@@ -2,6 +2,7 @@
 import {ref,onMounted} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatTime } from '@/utils/formatTime'
+import { toggleFavorite as toggleFavoriteAPI } from '@/utils/toggleFavorite'
 
 const router = useRouter()
 const route = useRoute()
@@ -17,24 +18,8 @@ async function toggleFavorite() {
   updatingFavorite.value = true
 
   try {
-    const response = await fetch(
-      `https://recipemanager-40pu.onrender.com/recipes/${route.params.id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          is_favorite: !selectedRecipe.value.is_favorite
-        })
-      }
-    )
+    const updatedRecipe = await toggleFavoriteAPI(selectedRecipe.value)
 
-    if (!response.ok) {
-      throw new Error(`Status: ${response.status}`)
-    }
-
-    const updatedRecipe = await response.json()
     selectedRecipe.value = updatedRecipe
 
   } catch (err) {
@@ -197,8 +182,8 @@ onMounted(()=>{getRecipe()})
     }
 
     .details {
+        position: relative;
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
         align-items: flex-start;
         gap: 20px;
@@ -226,8 +211,9 @@ onMounted(()=>{getRecipe()})
         flex-direction: column;
         gap: 10px;
         align-items: flex-end;
-        padding: 30px;
+        padding: 70px 30px 30px;
     }
+
 
     .title-row {
         display: flex;
@@ -241,13 +227,15 @@ onMounted(()=>{getRecipe()})
     }
 
     .favorite-button {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
         background: transparent;
         border: none;
-        font-size: 40px;
+        font-size: 35px;
         color: #888;
         cursor: pointer;
-        padding: 5px;
-        line-height: 1;
         transition: color 0.2s ease, transform 0.2s ease;
     }
 
